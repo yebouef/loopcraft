@@ -3,1364 +3,790 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prince Tech — Agent Prompt Builder</title>
+<title>LoopCraft — Describe it. Get your prompt.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#0f1117; --surface:#1a1d27; --border:#2a2d3e;
-  --accent:#6c63ff; --accent2:#00d4aa; --warn:#f59e0b;
-  --text:#e2e8f0; --muted:#64748b; --success:#22c55e;
-  --radius:10px;
-  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  --mono:'SF Mono','Fira Code',monospace;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface-2: #21242f;
+    --border: #2a2d3e;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --accent: #6c63ff;
+    --accent-soft: rgba(108, 99, 255, 0.14);
+    --success: #22c55e;
+    --warn: #f59e0b;
+    --radius: 10px;
+    --sans: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
 
-/* HEADER */
-header{background:#1a1d27;border-bottom:1px solid var(--border);padding:14px 28px;
-  display:flex;align-items:center;justify-content:space-between;
-  position:sticky;top:0;z-index:200}
-header h1{font-size:15px;font-weight:700}
-header h1 span{color:var(--accent)}
-.header-right{display:flex;align-items:center;gap:10px}
-.lang-toggle{display:flex;background:var(--bg);border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.lang-btn{padding:5px 13px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s}
-.lang-btn.active{background:var(--accent);color:#fff}
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+  .brand-mark {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), #9b8cff);
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 15px; color: #fff;
+  }
+  .brand-name { font-weight: 600; font-size: 17px; letter-spacing: -0.01em; }
+  .brand-name span { color: var(--accent); }
+  .header-right { display: flex; align-items: center; gap: 14px; }
+  .lang-toggle {
+    display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+  }
+  .lang-toggle button {
+    background: transparent; border: none; color: var(--muted);
+    font-family: var(--sans); font-size: 13px; font-weight: 600;
+    padding: 6px 12px; cursor: pointer; transition: background 0.15s, color 0.15s;
+  }
+  .lang-toggle button.active { background: var(--accent-soft); color: var(--accent); }
+  .lang-toggle button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .home-link { color: var(--muted); font-size: 13.5px; text-decoration: none; }
+  .home-link:hover { color: var(--text); }
 
-/* LAYOUT — sidebar + main */
-.layout{display:flex;min-height:calc(100vh - 53px)}
+  /* ── MAIN COLUMN ── */
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+  }
 
-/* SIDEBAR */
-.sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);
-  padding:24px 0;position:sticky;top:53px;height:calc(100vh - 53px);overflow-y:auto}
-.sidebar-step{display:flex;align-items:center;gap:12px;padding:10px 20px;cursor:pointer;
-  border-left:3px solid transparent;transition:all .2s;position:relative}
-.sidebar-step:hover{background:rgba(108,99,255,.06)}
-.sidebar-step.active{border-left-color:var(--accent);background:rgba(108,99,255,.08)}
-.sidebar-step.done{border-left-color:var(--success)}
-.s-circle{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);
-  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;
-  color:var(--muted);flex-shrink:0;transition:all .25s}
-.sidebar-step.active .s-circle{background:var(--accent);border-color:var(--accent);color:#fff}
-.sidebar-step.done .s-circle{background:var(--success);border-color:var(--success);color:#fff}
-.s-info .s-label{font-size:12px;font-weight:600;color:var(--muted)}
-.sidebar-step.active .s-label{color:var(--text)}
-.sidebar-step.done .s-label{color:var(--success)}
-.s-info .s-sub{font-size:10px;color:var(--muted);margin-top:1px}
-.sidebar-divider{height:1px;background:var(--border);margin:12px 20px}
-.sidebar-history{padding:0 20px}
-.sidebar-history-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.hist-item{font-size:11px;color:var(--muted);padding:6px 8px;border-radius:6px;cursor:pointer;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all .2s;border:1px solid transparent}
-.hist-item:hover{color:var(--text);border-color:var(--border);background:var(--bg)}
+  .hero-title {
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    text-align: center;
+  }
+  .hero-title em { font-style: normal; color: var(--accent); }
+  .hero-sub {
+    text-align: center;
+    color: var(--muted);
+    font-size: 16px;
+    margin: 14px auto 40px;
+    max-width: 520px;
+  }
 
-/* MAIN */
-.main{flex:1;padding:28px 32px;max-width:860px;min-width:0}
+  /* ── THE ONE BOX ── */
+  .composer {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 8px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .composer:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .composer textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    resize: vertical;
+    min-height: 130px;
+    padding: 14px 14px 6px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .composer textarea:focus { outline: none; }
+  .composer textarea::placeholder { color: var(--muted); opacity: 0.85; }
+  .composer-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 6px 8px 6px 14px;
+  }
+  .composer-hint { color: var(--muted); font-size: 12.5px; }
+  .btn {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    border-radius: 9px;
+    padding: 11px 22px;
+    cursor: pointer;
+    transition: transform 0.12s, filter 0.15s, background 0.15s;
+  }
+  .btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { filter: brightness(1.12); }
+  .btn-primary:disabled { opacity: 0.55; cursor: wait; }
+  .btn-ghost {
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--border); font-size: 13.5px; padding: 8px 14px;
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
 
-/* LIVE PREVIEW DRAWER */
-.preview-toggle{position:fixed;right:0;top:50%;transform:translateY(-50%);
-  background:var(--accent);color:#fff;border:none;border-radius:8px 0 0 8px;
-  padding:12px 8px;font-size:11px;font-weight:700;cursor:pointer;writing-mode:vertical-rl;
-  letter-spacing:.5px;z-index:150;transition:all .2s}
-.preview-toggle:hover{background:#5a52e0}
-.preview-drawer{position:fixed;right:-360px;top:53px;width:360px;
-  height:calc(100vh - 53px);background:var(--surface);border-left:1px solid var(--border);
-  z-index:149;transition:right .3s ease;overflow-y:auto;padding:20px}
-.preview-drawer.open{right:0}
-.preview-header{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;
-  letter-spacing:.5px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
-.preview-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1}
-.preview-box{font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--text);
-  white-space:pre-wrap;background:var(--bg);border:1px solid var(--border);
-  border-radius:8px;padding:14px;min-height:200px}
+  /* ── EXAMPLE CHIPS ── */
+  .starters { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 18px; }
+  .starter {
+    background: transparent; border: 1px solid var(--border); color: var(--muted);
+    border-radius: 999px; padding: 7px 14px; font-family: var(--sans);
+    font-size: 13px; cursor: pointer; transition: color 0.15s, border-color 0.15s;
+  }
+  .starter:hover { color: var(--text); border-color: var(--accent); }
+  .starter:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* PANELS */
-.panel{display:none}
-.panel.active{display:block;animation:fadeIn .2s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+  /* ── RESULT ── */
+  #result { display: none; margin-top: 44px; }
+  #result.visible { display: block; animation: rise 0.35s ease; }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
-/* PANEL HEADER */
-.panel-label{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
-.panel-title{font-size:22px;font-weight:700;margin-bottom:5px}
-.panel-desc{font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.6}
+  .receipt-label {
+    font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+  }
+  .receipt { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 999px; padding: 6px 13px;
+    font-size: 13px; color: var(--text); font-family: var(--sans);
+    cursor: pointer; transition: border-color 0.15s;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .chip b { color: var(--accent); font-weight: 600; }
+  .chip .pencil { color: var(--muted); font-size: 11px; }
+  .receipt-why { color: var(--muted); font-size: 13.5px; margin-bottom: 22px; }
 
-/* CARDS */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:16px}
-.card-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-.card-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
-.icon-purple{background:rgba(108,99,255,.15)}
-.icon-green{background:rgba(0,212,170,.15)}
-.icon-yellow{background:rgba(245,158,11,.15)}
-.card-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
-.card-sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .prompt-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .prompt-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+    flex-wrap: wrap; gap: 8px;
+  }
+  .prompt-head-title { font-size: 13px; font-weight: 600; color: var(--muted); }
+  .prompt-actions { display: flex; gap: 8px; }
+  pre#promptOut {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.65;
+    padding: 20px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 480px;
+    overflow-y: auto;
+    color: #cdd6e4;
+  }
 
-/* FORM */
-.field{margin-bottom:14px}
-label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
-input[type=text],textarea,select{width:100%;background:var(--bg);border:1px solid var(--border);
-  color:var(--text);padding:10px 13px;border-radius:7px;font-size:13px;
-  font-family:var(--sans);transition:border .2s;outline:none}
-input[type=text]:focus,textarea:focus,select:focus{border-color:var(--accent)}
-textarea{resize:vertical;min-height:72px}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  /* ── ADVANCED PANEL ── */
+  details.advanced { margin-top: 26px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+  details.advanced summary {
+    cursor: pointer; padding: 14px 18px; font-weight: 600; font-size: 14.5px;
+    color: var(--muted); list-style: none; display: flex; align-items: center; gap: 8px;
+  }
+  details.advanced summary::-webkit-details-marker { display: none; }
+  details.advanced summary::before { content: '▸'; transition: transform 0.2s; color: var(--accent); }
+  details.advanced[open] summary::before { transform: rotate(90deg); }
+  details.advanced summary:hover { color: var(--text); }
+  .adv-grid { padding: 6px 18px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .adv-field { display: flex; flex-direction: column; gap: 6px; }
+  .adv-field.full { grid-column: 1 / -1; }
+  .adv-field label { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+  .adv-field input, .adv-field select, .adv-field textarea {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    color: var(--text); font-family: var(--sans); font-size: 14px; padding: 9px 12px;
+  }
+  .adv-field textarea { resize: vertical; min-height: 60px; }
+  .adv-field input:focus, .adv-field select:focus, .adv-field textarea:focus {
+    outline: none; border-color: var(--accent);
+  }
+  .adv-divider {
+    grid-column: 1 / -1; font-size: 11.5px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+    padding-top: 8px; border-top: 1px solid var(--border);
+  }
 
-/* QUESTION BLOCKS */
-.q-block{display:flex;gap:14px;padding:18px 0}
-.q-num-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
-.q-num{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;
-  font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.q-check{font-size:14px;color:var(--success);opacity:0;transition:opacity .2s}
-.q-check.show{opacity:1}
-.q-body{flex:1}
-.q-text{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.4}
-.q-hint{font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5}
-.q-divider{height:1px;background:var(--border)}
-.skip-btn{font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;
-  margin-top:6px;text-decoration:underline;transition:color .2s}
-.skip-btn:hover{color:var(--accent2)}
+  /* ── HISTORY ── */
+  details.history { margin-top: 18px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+  details.history summary {
+    cursor: pointer; padding: 13px 18px; font-weight: 600; font-size: 14px;
+    color: var(--muted); list-style: none;
+  }
+  details.history summary::-webkit-details-marker { display: none; }
+  details.history summary:hover { color: var(--text); }
+  .history-list { padding: 0 18px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .history-item {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 14px; font-size: 13.5px; color: var(--muted); cursor: pointer;
+    text-align: left; font-family: var(--sans);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .history-item:hover { color: var(--text); border-color: var(--accent); }
+  .history-empty { color: var(--muted); font-size: 13px; padding: 0 18px 16px; }
 
-/* SUGGESTION PILLS */
-.suggestions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.sug-pill{padding:4px 10px;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);
-  border-radius:20px;font-size:11px;color:var(--accent);cursor:pointer;transition:all .2s}
-.sug-pill:hover{background:rgba(108,99,255,.2)}
+  /* ── TOAST ── */
+  #toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--surface-2); border: 1px solid var(--border); color: var(--text);
+    padding: 11px 20px; border-radius: 10px; font-size: 14px; font-weight: 500;
+    opacity: 0; transition: transform 0.25s ease, opacity 0.25s ease; pointer-events: none; z-index: 50;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-/* TILE GRIDS */
-.tile-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
-.tile-grid-3 .tile,.tile-grid-3 .role-chip,.tile-grid-3 .fmt-chip{
-  padding:12px 8px;border:2px solid var(--border);border-radius:9px;
-  font-size:12px;font-weight:600;cursor:pointer;text-align:center;
-  color:var(--muted);transition:all .2s;background:transparent}
-.tile-grid-3 .tile .tile-icon,.tile-grid-3 .role-chip .tile-icon,.tile-grid-3 .fmt-chip .tile-icon{font-size:20px;margin-bottom:4px}
-.tile-grid-3 .tile .tile-sub,.tile-grid-3 .role-chip .tile-sub,.tile-grid-3 .fmt-chip .tile-sub{
-  font-size:10px;font-weight:400;color:var(--muted);margin-top:3px}
+  /* ── ENGINE STATUS ── */
+  .engine-note {
+    text-align: center; margin-top: 10px; font-size: 12px; color: var(--muted);
+  }
+  .engine-note .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
+  .dot.ai { background: var(--success); }
+  .dot.local { background: var(--warn); }
 
-/* LOOP CARDS */
-.loop-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-.loop-card{border:2px solid var(--border);border-radius:9px;padding:16px;cursor:pointer;transition:all .2s}
-.loop-card.sel-core{border-color:var(--accent);background:rgba(108,99,255,.06)}
-.loop-card.sel-fleet{border-color:var(--accent2);background:rgba(0,212,170,.06)}
-
-/* BUTTONS */
-.btn{padding:10px 20px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
-.btn-primary{background:var(--accent);color:#fff}
-.btn-primary:hover{background:#5a52e0}
-.btn-secondary{background:var(--border);color:var(--text)}
-.btn-secondary:hover{background:#353849}
-.btn-success{background:var(--success);color:#fff}
-.btn-success:hover{background:#16a34a}
-.btn-outline{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
-.btn-outline:hover{background:rgba(108,99,255,.1)}
-.btn-sm{padding:7px 14px;font-size:12px}
-.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-.nav-btns{display:flex;justify-content:space-between;margin-top:22px;align-items:center}
-
-/* SPECIALIST */
-.specialist-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px}
-.spec-label{font-size:11px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
-
-/* OUTPUT */
-.output-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;
-  padding:18px;font-family:var(--mono);font-size:12px;line-height:1.75;
-  white-space:pre-wrap;color:var(--text);min-height:200px;max-height:500px;overflow-y:auto}
-
-/* REFERENCE */
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.chip{padding:6px 14px;background:var(--surface);border:1px solid var(--border);
-  border-radius:20px;font-size:12px;cursor:pointer;color:var(--muted);transition:all .2s;font-weight:500}
-.chip:hover{border-color:var(--accent);color:var(--accent)}
-.ref-block{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px}
-.ref-title{font-size:12px;font-weight:700;margin-bottom:8px}
-.ref-list{font-size:12px;color:var(--muted);line-height:1.9;padding-left:16px}
-
-/* TOAST */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);
-  background:var(--success);color:#fff;padding:11px 22px;border-radius:8px;
-  font-size:13px;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* TIP */
-.tip{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);
-  border-radius:8px;padding:10px 14px;font-size:12px;color:var(--warn);margin-bottom:16px}
-.info-box{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:14px;margin-bottom:12px;font-size:13px;color:var(--text);line-height:1.75}
-
-/* QUIZ */
-.quiz-box{background:rgba(0,212,170,.05);border:1px solid rgba(0,212,170,.2);border-radius:9px;padding:14px}
-.quiz-q{font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px}
-.quiz-btns{display:flex;gap:8px}
-.quiz-btn{flex:1;padding:9px;border:1.5px solid var(--border);border-radius:7px;
-  background:var(--bg);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
-.quiz-btn:hover{border-color:var(--accent2)}
-#quiz-result{margin-top:10px;font-size:12px;padding:8px 12px;border-radius:6px;display:none}
-
-/* MOBILE */
-@media(max-width:640px){
-  .sidebar{display:none}
-  .main{padding:16px}
-  .tile-grid-3{grid-template-columns:repeat(2,1fr)}
-  .loop-grid{grid-template-columns:1fr}
-  .row2{grid-template-columns:1fr}
-  .preview-drawer{width:100vw;right:-100vw}
-}
+  @media (max-width: 620px) {
+    .adv-grid { grid-template-columns: 1fr; }
+    main { padding-top: 36px; }
+    .composer-bar { flex-direction: column; align-items: stretch; }
+    .composer-hint { text-align: center; }
+    .btn-primary { width: 100%; }
+  }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>🧠 <span>Prince Tech</span> — Prompt Builder</h1>
+  <a class="brand" href="index.html">
+    <div class="brand-mark">L</div>
+    <div class="brand-name">Loop<span>Craft</span></div>
+  </a>
   <div class="header-right">
-    <button class="btn btn-sm btn-secondary" onclick="saveProgress()" id="saveBtn">💾 <span data-en="Save" data-fr="Sauvegarder">Save</span></button>
-    <div class="lang-toggle">
-      <button class="lang-btn active" onclick="setLang('en')" id="btn-en">EN</button>
-      <button class="lang-btn" onclick="setLang('fr')" id="btn-fr">FR</button>
+    <a class="home-link" href="index.html" data-en="← Home" data-fr="← Accueil">← Home</a>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+      <button id="btn-fr" onclick="setLang('fr')">FR</button>
     </div>
   </div>
 </header>
 
-<!-- LIVE PREVIEW TOGGLE -->
-<button class="preview-toggle" onclick="togglePreview()" id="previewToggle" data-en="PREVIEW" data-fr="APERÇU">PREVIEW</button>
-<div class="preview-drawer" id="previewDrawer">
-  <div class="preview-header">
-    <span data-en="Live Prompt Preview" data-fr="Aperçu en Direct">Live Prompt Preview</span>
-    <button class="preview-close" onclick="togglePreview()">×</button>
+<main>
+  <h1 class="hero-title" data-en="Describe it. <em>Get your prompt.</em>" data-fr="Décrivez-le. <em>Recevez votre prompt.</em>">Describe it. <em>Get your prompt.</em></h1>
+  <p class="hero-sub" data-en="Tell LoopCraft what you're working on — like you'd text a colleague. It figures out the setup and builds a structured AI prompt for you." data-fr="Dites à LoopCraft sur quoi vous travaillez — comme un message à un collègue. Il détermine la configuration et construit un prompt IA structuré pour vous.">Tell LoopCraft what you're working on — like you'd text a colleague. It figures out the setup and builds a structured AI prompt for you.</p>
+
+  <div class="composer">
+    <textarea id="brief" data-placeholder-en="e.g. I need a Python script that pulls stock data from an API and scores each stock. Yesterday I finished the API connection — next is the scoring logic." data-placeholder-fr="ex. J'ai besoin d'un script Python qui récupère des données boursières via une API et note chaque action. Hier j'ai terminé la connexion API — la suite c'est la logique de scoring." placeholder="e.g. I need a Python script that pulls stock data from an API and scores each stock. Yesterday I finished the API connection — next is the scoring logic."></textarea>
+    <div class="composer-bar">
+      <span class="composer-hint" data-en="One or two sentences is enough. Mention past work and it builds your memory snapshot too." data-fr="Une ou deux phrases suffisent. Mentionnez le travail passé et il construit aussi votre snapshot mémoire.">One or two sentences is enough. Mention past work and it builds your memory snapshot too.</span>
+      <button class="btn btn-primary" id="goBtn" onclick="generate()" data-en="Build my prompt" data-fr="Créer mon prompt">Build my prompt</button>
+    </div>
   </div>
-  <div class="preview-box" id="livePreview" data-en="Fill in the form to see your prompt build here in real time..." data-fr="Remplissez le formulaire pour voir votre prompt se construire ici en temps réel...">Fill in the form to see your prompt build here in real time...</div>
-</div>
 
-<div class="layout">
-  <!-- SIDEBAR NAV -->
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-step active" id="ss1" onclick="goToStep(1)">
-      <div class="s-circle" id="sc1">1</div>
-      <div class="s-info">
-        <div class="s-label" data-en="Project Setup" data-fr="Paramètres">Project Setup</div>
-        <div class="s-sub" data-en="Name & loop type" data-fr="Nom & type de boucle">Name & loop type</div>
-      </div>
-    </div>
-    <div class="sidebar-step" id="ss2" onclick="goToStep(2)">
-      <div class="s-circle" id="sc2">2</div>
-      <div class="s-info">
-        <div class="s-label" data-en="Tell the AI" data-fr="Dites à l'IA">Tell the AI</div>
-        <div class="s-sub" data-en="Goal, role & format" data-fr="Objectif, rôle & format">Goal, role & format</div>
-      </div>
-    </div>
-    <div class="sidebar-step" id="ss3" onclick="goToStep(3)">
-      <div class="s-circle" id="sc3">3</div>
-      <div class="s-info">
-        <div class="s-label" data-en="Memory" data-fr="Mémoire">Memory</div>
-        <div class="s-sub" data-en="Session context" data-fr="Contexte de session">Session context</div>
-      </div>
-    </div>
-    <div class="sidebar-step" id="ss4" onclick="goToStep(4)">
-      <div class="s-circle" id="sc4">4</div>
-      <div class="s-info">
-        <div class="s-label" data-en="Your Prompt" data-fr="Votre Prompt">Your Prompt</div>
-        <div class="s-sub" data-en="Copy & use" data-fr="Copier & utiliser">Copy & use</div>
-      </div>
-    </div>
-    <div class="sidebar-step" id="ss5" onclick="goToStep(5)">
-      <div class="s-circle" id="sc5">5</div>
-      <div class="s-info">
-        <div class="s-label" data-en="Reference" data-fr="Référence">Reference</div>
-        <div class="s-sub" data-en="Examples & tips" data-fr="Exemples & conseils">Examples & tips</div>
-      </div>
-    </div>
+  <div class="starters">
+    <button class="starter" onclick="useStarter(0)" data-en="Build a dashboard" data-fr="Créer un tableau de bord">Build a dashboard</button>
+    <button class="starter" onclick="useStarter(1)" data-en="Continue yesterday's project" data-fr="Continuer le projet d'hier">Continue yesterday's project</button>
+    <button class="starter" onclick="useStarter(2)" data-en="Automate a report" data-fr="Automatiser un rapport">Automate a report</button>
+    <button class="starter" onclick="useStarter(3)" data-en="Plan a full platform" data-fr="Planifier une plateforme complète">Plan a full platform</button>
+  </div>
 
-    <div class="sidebar-divider"></div>
-    <div class="sidebar-history">
-      <div class="sidebar-history-title" data-en="Recent Prompts" data-fr="Prompts Récents">Recent Prompts</div>
-      <div id="historyList"><div style="font-size:11px;color:var(--muted)" data-en="None saved yet" data-fr="Aucun sauvegardé">None saved yet</div></div>
+  <p class="engine-note" id="engineNote"></p>
+
+  <!-- ── RESULT ── -->
+  <section id="result" aria-live="polite">
+    <p class="receipt-label" data-en="What LoopCraft decided — tap any chip to change it" data-fr="Ce que LoopCraft a décidé — touchez une puce pour la modifier">What LoopCraft decided — tap any chip to change it</p>
+    <div class="receipt">
+      <button class="chip" onclick="openAdvanced('loopType')"><span data-en="Loop" data-fr="Boucle">Loop</span>:&nbsp;<b id="chipLoop">Core</b> <span class="pencil">✎</span></button>
+      <button class="chip" onclick="openAdvanced('role')"><span data-en="Role" data-fr="Rôle">Role</span>:&nbsp;<b id="chipRole">Developer</b> <span class="pencil">✎</span></button>
+      <button class="chip" onclick="openAdvanced('format')"><span data-en="Output" data-fr="Sortie">Output</span>:&nbsp;<b id="chipFormat">Code</b> <span class="pencil">✎</span></button>
+      <button class="chip" id="chipMemoryWrap" style="display:none" onclick="openAdvanced('memStatus')"><span data-en="Memory" data-fr="Mémoire">Memory</span>:&nbsp;<b data-en="detected" data-fr="détectée">detected</b> <span class="pencil">✎</span></button>
     </div>
-  </nav>
+    <p class="receipt-why" id="whyLine"></p>
 
-  <!-- MAIN CONTENT -->
-  <div class="main">
-
-    <!-- ═══ STEP 1 ═══ -->
-    <div class="panel active" id="panel-1">
-      <div class="panel-label" data-en="Step 1 of 5" data-fr="Étape 1 sur 5">Step 1 of 5</div>
-      <div class="panel-title" data-en="Project Setup" data-fr="Paramètres du Projet">Project Setup</div>
-      <div class="panel-desc" data-en="Name your project and choose how the AI should work." data-fr="Nommez votre projet et choisissez comment l'IA doit travailler.">Name your project and choose how the AI should work.</div>
-
-      <div class="card">
-        <div class="card-header"><div class="card-icon icon-purple">📁</div>
-          <div><div class="card-title" data-en="Project Info" data-fr="Infos Projet">Project Info</div></div>
+    <div class="prompt-box">
+      <div class="prompt-head">
+        <span class="prompt-head-title" data-en="Your prompt — paste it at the start of any AI chat" data-fr="Votre prompt — collez-le au début de n'importe quel chat IA">Your prompt — paste it at the start of any AI chat</span>
+        <div class="prompt-actions">
+          <button class="btn btn-ghost" onclick="copyPrompt()" data-en="Copy" data-fr="Copier">Copy</button>
+          <button class="btn btn-ghost" onclick="openInClaude()" data-en="Open in Claude" data-fr="Ouvrir dans Claude">Open in Claude</button>
         </div>
-        <div class="row2">
-          <div class="field">
-            <label data-en="Project Name" data-fr="Nom du Projet">Project Name</label>
-            <input type="text" id="projectName" oninput="updatePreview();markField('projectName')"
-              data-ph-en="e.g. Sales Dashboard v2" data-ph-fr="ex. Tableau de Bord Ventes v2" placeholder="e.g. Sales Dashboard v2">
-          </div>
-          <div class="field">
-            <label data-en="Client / Owner" data-fr="Client / Responsable">Client / Owner</label>
-            <input type="text" id="clientName" oninput="updatePreview()"
-              data-ph-en="e.g. Acme Corp" data-ph-fr="ex. Acme Corp" placeholder="e.g. Acme Corp">
-          </div>
+      </div>
+      <pre id="promptOut"></pre>
+    </div>
+
+    <!-- ── ADVANCED ── -->
+    <details class="advanced" id="advPanel">
+      <summary data-en="Advanced — edit the details" data-fr="Avancé — modifier les détails">Advanced — edit the details</summary>
+      <div class="adv-grid">
+        <div class="adv-field">
+          <label for="projectName" data-en="Project name" data-fr="Nom du projet">Project name</label>
+          <input id="projectName" oninput="rebuild()">
         </div>
-        <div class="field">
-          <label data-en="Project Type" data-fr="Type de Projet">Project Type</label>
-          <select id="projectType" onchange="updatePreview()">
-            <option data-en="Client Project" data-fr="Projet Client">Client Project</option>
-            <option data-en="Internal Tool / Dashboard" data-fr="Outil Interne / Tableau de Bord">Internal Tool / Dashboard</option>
-            <option data-en="AI Automation Workflow" data-fr="Automatisation IA">AI Automation Workflow</option>
-            <option data-en="Personal Project" data-fr="Projet Personnel">Personal Project</option>
+        <div class="adv-field">
+          <label for="loopType" data-en="Loop pattern" data-fr="Modèle de boucle">Loop pattern</label>
+          <select id="loopType" onchange="rebuild()">
+            <option value="core">Core Loop — one goal, one deliverable</option>
+            <option value="fleet">Fleet Loop — multiple workstreams</option>
           </select>
         </div>
-      </div>
-
-      <!-- LOOP EXPLAINER -->
-      <div class="card">
-        <div class="card-header"><div class="card-icon icon-yellow">🔄</div>
-          <div><div class="card-title" data-en="Loop Pattern — What should I pick?" data-fr="Type de Boucle — Que choisir?">Loop Pattern — What should I pick?</div>
-          <div class="card-sub" data-en="Read both options, then click the one that fits." data-fr="Lisez les deux options, puis cliquez celle qui convient.">Read both options, then click the one that fits.</div></div>
+        <div class="adv-field">
+          <label for="role" data-en="AI acts as" data-fr="L'IA agit comme">AI acts as</label>
+          <select id="role" onchange="rebuild()">
+            <option value="Developer">Developer — writes &amp; fixes code</option>
+            <option value="Data Analyst">Data Analyst — data &amp; SQL</option>
+            <option value="AI Engineer">AI Engineer — automations</option>
+            <option value="Business Analyst">Business Analyst — plans &amp; documents</option>
+            <option value="Cloud / DevOps Engineer">Cloud / DevOps — deploys &amp; configures</option>
+            <option value="UX Designer">UX Designer — interfaces</option>
+          </select>
         </div>
-        <div class="info-box" data-en="Think of it like this: an AI agent is like a <strong style='color:var(--accent2)'>contractor</strong> you hire. The loop pattern decides whether you hire <em>one person</em> who does everything, or a <em>project manager</em> who runs a team of specialists." data-fr="Pensez-y ainsi : un agent IA est comme un <strong style='color:var(--accent2)'>prestataire</strong> que vous engagez. Le type de boucle décide si vous engagez <em>une seule personne</em> qui fait tout, ou un <em>chef de projet</em> qui dirige une équipe de spécialistes.">Think of it like this: an AI agent is like a <strong style="color:var(--accent2)">contractor</strong> you hire. The loop pattern decides whether you hire <em>one person</em> who does everything, or a <em>project manager</em> who runs a team of specialists.</div>
-        <div class="loop-grid">
-          <div class="loop-card sel-core" id="lc-core" onclick="setLoop('core')">
-            <div style="font-size:22px;margin-bottom:6px">🔄</div>
-            <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:6px" data-en="Core Loop" data-fr="Boucle Principale">Core Loop</div>
-            <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px" data-en="<strong style='color:var(--text)'>One agent</strong> handles everything — discovers, plans, builds, verifies." data-fr="<strong style='color:var(--text)'>Un agent</strong> gère tout — découvre, planifie, construit, vérifie."><strong style="color:var(--text)">One agent</strong> handles everything.</div>
-            <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:5px" data-en="Use when:" data-fr="Utiliser quand:">Use when:</div>
-            <ul style="font-size:12px;color:var(--muted);line-height:1.8;padding-left:14px">
-              <li data-en="One clear goal, one deliverable" data-fr="Un objectif clair, un livrable">One clear goal, one deliverable</li>
-              <li data-en="Steps happen one after another" data-fr="Les étapes se font l'une après l'autre">Steps happen one after another</li>
-              <li data-en="You want to control cost" data-fr="Vous voulez contrôler le coût">You want to control cost</li>
-            </ul>
-            <div style="margin-top:10px;font-size:11px;background:rgba(108,99,255,.1);border-radius:6px;padding:6px 10px;color:var(--accent)" data-en="📌 e.g. Write a SQL report, build a login page" data-fr="📌 ex. Écrire un rapport SQL, créer une page de connexion">📌 e.g. Write a SQL report, build a login page</div>
-          </div>
-          <div class="loop-card" id="lc-fleet" onclick="setLoop('fleet')">
-            <div style="font-size:22px;margin-bottom:6px">🚀</div>
-            <div style="font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px" id="fleet-title" data-en="Fleet Loop" data-fr="Boucle Flotte">Fleet Loop</div>
-            <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px" data-en="An <strong style='color:var(--text)'>Orchestrator</strong> manages multiple <strong style='color:var(--text)'>Specialists</strong> running in parallel." data-fr="Un <strong style='color:var(--text)'>Orchestrateur</strong> gère plusieurs <strong style='color:var(--text)'>Spécialistes</strong> en parallèle.">An <strong style="color:var(--text)">Orchestrator</strong> manages multiple Specialists.</div>
-            <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:5px" data-en="Use when:" data-fr="Utiliser quand:">Use when:</div>
-            <ul style="font-size:12px;color:var(--muted);line-height:1.8;padding-left:14px">
-              <li data-en="Multiple workstreams at once" data-fr="Plusieurs flux simultanés">Multiple workstreams at once</li>
-              <li data-en="Different expertise needed" data-fr="Expertises différentes requises">Different expertise needed</li>
-              <li data-en="Large or complex project" data-fr="Projet large ou complexe">Large or complex project</li>
-            </ul>
-            <div style="margin-top:10px;font-size:11px;background:rgba(100,116,139,.1);border-radius:6px;padding:6px 10px;color:var(--muted)" data-en="📌 e.g. Full platform: UI + API + DB + tests" data-fr="📌 ex. Plateforme complète: UI + API + BD + tests">📌 e.g. Full platform: UI + API + DB + tests</div>
-          </div>
+        <div class="adv-field">
+          <label for="format" data-en="Output format" data-fr="Format de sortie">Output format</label>
+          <select id="format" onchange="rebuild()">
+            <option value="Working code">Code — ready to run</option>
+            <option value="Step-by-step action plan">Action plan — steps to follow</option>
+            <option value="Written report">Report — shareable document</option>
+            <option value="SQL queries">SQL — database queries</option>
+            <option value="Data analysis">Analysis — data insights</option>
+            <option value="Email / proposal draft">Email / Proposal — ready to send</option>
+          </select>
         </div>
-        <!-- QUIZ -->
-        <div class="quiz-box">
-          <div class="quiz-q" data-en="🤔 Not sure? Can you describe your whole project in one sentence?" data-fr="🤔 Pas sûr(e)? Pouvez-vous décrire tout votre projet en une phrase?">🤔 Not sure? Can you describe your whole project in one sentence?</div>
-          <div class="quiz-btns">
-            <button class="quiz-btn" onclick="setLoop('core');quizFeedback('core')"><span data-en="✅ Yes → Core Loop" data-fr="✅ Oui → Boucle Principale">✅ Yes → Core Loop</span></button>
-            <button class="quiz-btn" onclick="setLoop('fleet');quizFeedback('fleet')"><span data-en="❌ No, it's bigger → Fleet Loop" data-fr="❌ Non, c'est plus grand → Boucle Flotte">❌ No, it's bigger → Fleet Loop</span></button>
-          </div>
-          <div id="quiz-result"></div>
+        <div class="adv-field full">
+          <label for="goal" data-en="Goal — what should the AI build or do?" data-fr="Objectif — que doit faire ou construire l'IA ?">Goal — what should the AI build or do?</label>
+          <textarea id="goal" oninput="rebuild()"></textarea>
         </div>
-        <div id="loop-badge" style="margin-top:12px;text-align:center;font-size:12px;font-weight:700;color:var(--accent)">✅ <span id="loop-badge-text" data-en="Selected: Core Loop" data-fr="Sélectionné: Boucle Principale">Selected: Core Loop</span></div>
-      </div>
-
-      <!-- FLEET SECTION -->
-      <div id="fleetSection" style="display:none">
-        <div class="card">
-          <div class="card-header"><div class="card-icon icon-green">🧠</div>
-            <div><div class="card-title" data-en="Orchestrator Instructions" data-fr="Instructions Orchestrateur">Orchestrator Instructions</div></div>
-          </div>
-          <textarea id="orchInstructions" oninput="updatePreview()"
-            data-ph-en="e.g. Break project into frontend, backend, and data workstreams. Each specialist runs independently."
-            data-ph-fr="ex. Diviser en flux frontend, backend et données."
-            placeholder="e.g. Break project into frontend, backend, and data workstreams."></textarea>
+        <div class="adv-field full">
+          <label for="doneWhen" data-en="Done when — how will you know it's finished?" data-fr="Terminé quand — comment saurez-vous que c'est fini ?">Done when — how will you know it's finished?</label>
+          <textarea id="doneWhen" oninput="rebuild()"></textarea>
         </div>
-        <div id="specialists-container"></div>
-        <button class="btn btn-outline btn-sm" onclick="addSpecialist()" style="margin-bottom:16px">+ <span data-en="Add Specialist" data-fr="Ajouter Spécialiste">Add Specialist</span></button>
-      </div>
-
-      <div class="nav-btns">
-        <div></div>
-        <button class="btn btn-primary" onclick="nextStep(1)"><span data-en="Next: Tell the AI →" data-fr="Suivant : Dites à l'IA →">Next: Tell the AI →</span></button>
-      </div>
-    </div>
-
-    <!-- ═══ STEP 2 ═══ -->
-    <div class="panel" id="panel-2">
-      <div class="panel-label" data-en="Step 2 of 5" data-fr="Étape 2 sur 5">Step 2 of 5</div>
-      <div class="panel-title" data-en="Tell the AI what to do" data-fr="Dites à l'IA quoi faire">Tell the AI what to do</div>
-      <div class="panel-desc" data-en="Answer 5 quick questions. Each one takes 10 seconds." data-fr="Répondez à 5 questions rapides. Chacune prend 10 secondes.">Answer 5 quick questions. Each one takes 10 seconds.</div>
-
-      <div class="card">
-
-        <!-- Q1 -->
-        <div class="q-block">
-          <div class="q-num-wrap">
-            <div class="q-num">1</div>
-            <div class="q-check" id="chk1">✓</div>
-          </div>
-          <div class="q-body">
-            <div class="q-text" data-en="What do you want the AI to build or do?" data-fr="Que voulez-vous que l'IA construise ou fasse?">What do you want the AI to build or do?</div>
-            <div class="q-hint" data-en="Say it in one sentence, like you'd explain it to a friend." data-fr="Dites-le en une phrase, comme à un ami.">Say it in one sentence, like you'd explain it to a friend.</div>
-            <div class="suggestions" id="sug-q1"></div>
-            <input type="text" id="goal" oninput="onGoalInput();markCheck('chk1',this.value)"
-              data-ph-en="e.g. Build me a dashboard that shows monthly sales by region"
-              data-ph-fr="ex. Crée-moi un tableau de bord qui affiche les ventes mensuelles par région"
-              placeholder="e.g. Build me a dashboard that shows monthly sales by region">
-          </div>
+        <div class="adv-field full">
+          <label for="outOfScope" data-en="Out of scope — what should the AI NOT do?" data-fr="Hors périmètre — que ne doit PAS faire l'IA ?">Out of scope — what should the AI NOT do?</label>
+          <textarea id="outOfScope" oninput="rebuild()"></textarea>
         </div>
-        <div class="q-divider"></div>
-
-        <!-- Q2 -->
-        <div class="q-block">
-          <div class="q-num-wrap">
-            <div class="q-num">2</div>
-            <div class="q-check" id="chk2">✓</div>
-          </div>
-          <div class="q-body">
-            <div class="q-text" data-en="How will you know when it's done?" data-fr="Comment saurez-vous quand c'est terminé?">How will you know when it's done?</div>
-            <div class="q-hint" data-en="Describe what you'll be able to see or use when the AI finishes." data-fr="Décrivez ce que vous pourrez voir ou utiliser quand l'IA aura terminé.">Describe what you'll be able to see or use when the AI finishes.</div>
-            <textarea id="success" oninput="updatePreview();markCheck('chk2',this.value)"
-              data-ph-en="e.g. I can filter by month, see a bar chart, and download a PDF"
-              data-ph-fr="ex. Je peux filtrer par mois, voir un graphique et télécharger un PDF"
-              placeholder="e.g. I can filter by month, see a bar chart, and download a PDF"></textarea>
-          </div>
+        <div class="adv-divider" data-en="Memory snapshot — for continuing past work" data-fr="Snapshot mémoire — pour continuer un travail passé">Memory snapshot — for continuing past work</div>
+        <div class="adv-field full">
+          <label for="memStatus" data-en="📍 Where are we right now?" data-fr="📍 Où en sommes-nous ?">📍 Where are we right now?</label>
+          <textarea id="memStatus" oninput="rebuild()"></textarea>
         </div>
-        <div class="q-divider"></div>
-
-        <!-- Q3 -->
-        <div class="q-block">
-          <div class="q-num-wrap">
-            <div class="q-num">3</div>
-            <div class="q-check" id="chk3">✓</div>
-          </div>
-          <div class="q-body">
-            <div class="q-text" data-en="What should the AI NOT do?" data-fr="Que ne doit PAS faire l'IA?">What should the AI NOT do?</div>
-            <div class="q-hint" data-en="Keeps it focused. e.g. 'Don't build a mobile app, don't add login pages.'" data-fr="Garde l'IA concentrée. ex. 'Ne pas créer d'app mobile, pas de pages de connexion.'">Keeps it focused. e.g. "Don't build a mobile app, don't add login pages."</div>
-            <textarea id="outofscope" oninput="updatePreview();markCheck('chk3',this.value)"
-              data-ph-en="e.g. Don't add user accounts, don't use real data, no mobile app"
-              data-ph-fr="ex. Pas de comptes utilisateurs, pas de données réelles, pas d'app mobile"
-              placeholder="e.g. Don't add user accounts, don't use real data, no mobile app"></textarea>
-            <button class="skip-btn" onclick="skipQ3()" data-en="Skip — let the AI decide" data-fr="Ignorer — laisser l'IA décider">Skip — let the AI decide</button>
-          </div>
+        <div class="adv-field">
+          <label for="memLast" data-en="✅ Finished last time" data-fr="✅ Terminé la dernière fois">✅ Finished last time</label>
+          <textarea id="memLast" oninput="rebuild()"></textarea>
         </div>
-        <div class="q-divider"></div>
-
-        <!-- Q4 ROLE -->
-        <div class="q-block">
-          <div class="q-num-wrap">
-            <div class="q-num">4</div>
-            <div class="q-check" id="chk4">✓</div>
-          </div>
-          <div class="q-body">
-            <div class="q-text" data-en="What kind of expert should the AI act like?" data-fr="Quel type d'expert l'IA doit-elle incarner?">What kind of expert should the AI act like?</div>
-            <div class="q-hint" data-en="Pick the closest one — this changes how the AI thinks and answers." data-fr="Choisissez le plus proche — cela change comment l'IA pense et répond.">Pick the closest one — this changes how the AI thinks and answers.</div>
-            <input type="hidden" id="role" value="senior full-stack developer">
-            <div class="tile-grid-3">
-              <div class="role-chip sel-role" onclick="pickRole(this,'senior full-stack developer','développeur full-stack senior','chk4')" style="border-color:var(--accent);color:var(--accent);background:rgba(108,99,255,.08)">
-                <div class="tile-icon">💻</div><div data-en="Developer" data-fr="Développeur">Developer</div>
-                <div class="tile-sub" data-en="writes & fixes code" data-fr="écrit et corrige le code">writes & fixes code</div>
-              </div>
-              <div class="role-chip" onclick="pickRole(this,'senior data analyst and BI developer','analyste de données senior et développeur BI','chk4')">
-                <div class="tile-icon">📊</div><div data-en="Data Analyst" data-fr="Analyste Données">Data Analyst</div>
-                <div class="tile-sub" data-en="reads data, writes SQL" data-fr="lit les données, écrit SQL">reads data, writes SQL</div>
-              </div>
-              <div class="role-chip" onclick="pickRole(this,'AI automation engineer','ingénieur en automatisation IA','chk4')">
-                <div class="tile-icon">🤖</div><div data-en="AI Engineer" data-fr="Ingénieur IA">AI Engineer</div>
-                <div class="tile-sub" data-en="builds automations" data-fr="construit des automatisations">builds automations</div>
-              </div>
-              <div class="role-chip" onclick="pickRole(this,'business analyst and project consultant','analyste d\'affaires et consultant','chk4')">
-                <div class="tile-icon">📋</div><div data-en="Business Analyst" data-fr="Analyste Affaires">Business Analyst</div>
-                <div class="tile-sub" data-en="plans & documents" data-fr="planifie et documente">plans & documents</div>
-              </div>
-              <div class="role-chip" onclick="pickRole(this,'cloud and DevOps engineer','ingénieur cloud et DevOps','chk4')">
-                <div class="tile-icon">☁️</div><div data-en="Cloud / DevOps" data-fr="Cloud / DevOps">Cloud / DevOps</div>
-                <div class="tile-sub" data-en="deploys & configures" data-fr="déploie et configure">deploys & configures</div>
-              </div>
-              <div class="role-chip" onclick="pickRole(this,'UX designer and frontend specialist','designer UX et spécialiste frontend','chk4')">
-                <div class="tile-icon">🎨</div><div data-en="UX / Designer" data-fr="UX / Designer">UX / Designer</div>
-                <div class="tile-sub" data-en="designs interfaces" data-fr="conçoit des interfaces">designs interfaces</div>
-              </div>
-            </div>
-          </div>
+        <div class="adv-field">
+          <label for="memDecisions" data-en="🔒 Locked decisions" data-fr="🔒 Décisions verrouillées">🔒 Locked decisions</label>
+          <textarea id="memDecisions" oninput="rebuild()"></textarea>
         </div>
-        <div class="q-divider"></div>
-
-        <!-- Q5 FORMAT -->
-        <div class="q-block">
-          <div class="q-num-wrap">
-            <div class="q-num">5</div>
-            <div class="q-check" id="chk5">✓</div>
-          </div>
-          <div class="q-body">
-            <div class="q-text" data-en="What do you want to get back at the end?" data-fr="Que voulez-vous recevoir à la fin?">What do you want to get back at the end?</div>
-            <div class="q-hint" data-en="Pick the format most useful to you." data-fr="Choisissez le format qui vous est le plus utile.">Pick the format most useful to you.</div>
-            <input type="hidden" id="outputFormat" value="Working code (with comments)">
-            <div class="tile-grid-3">
-              <div class="fmt-chip" onclick="pickFormat(this,'Working code (with comments)','Code fonctionnel (avec commentaires)','chk5')">
-                <div class="tile-icon">💻</div><div data-en="Code" data-fr="Code">Code</div>
-                <div class="tile-sub" data-en="ready to run" data-fr="prêt à exécuter">ready to run</div>
-              </div>
-              <div class="fmt-chip" onclick="pickFormat(this,'Step-by-step action plan','Plan d\'action étape par étape','chk5')">
-                <div class="tile-icon">🗺️</div><div data-en="Action Plan" data-fr="Plan d'Action">Action Plan</div>
-                <div class="tile-sub" data-en="steps to follow" data-fr="étapes à suivre">steps to follow</div>
-              </div>
-              <div class="fmt-chip" onclick="pickFormat(this,'Written report or document','Rapport ou document écrit','chk5')">
-                <div class="tile-icon">📄</div><div data-en="Report" data-fr="Rapport">Report</div>
-                <div class="tile-sub" data-en="shareable document" data-fr="document partageable">shareable document</div>
-              </div>
-              <div class="fmt-chip" onclick="pickFormat(this,'SQL queries','Requêtes SQL','chk5')">
-                <div class="tile-icon">🗄️</div><div data-en="SQL" data-fr="SQL">SQL</div>
-                <div class="tile-sub" data-en="database queries" data-fr="requêtes BD">database queries</div>
-              </div>
-              <div class="fmt-chip" onclick="pickFormat(this,'Data analysis and insights','Analyse de données et insights','chk5')">
-                <div class="tile-icon">📊</div><div data-en="Analysis" data-fr="Analyse">Analysis</div>
-                <div class="tile-sub" data-en="data insights" data-fr="insights données">data insights</div>
-              </div>
-              <div class="fmt-chip" onclick="pickFormat(this,'Email or proposal draft','Brouillon email ou proposition','chk5')">
-                <div class="tile-icon">✉️</div><div data-en="Email / Proposal" data-fr="Email / Proposition">Email / Proposal</div>
-                <div class="tile-sub" data-en="ready to send" data-fr="prêt à envoyer">ready to send</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="nav-btns">
-        <button class="btn btn-secondary" onclick="prevStep(2)">← <span data-en="Back" data-fr="Retour">Back</span></button>
-        <button class="btn btn-primary" onclick="nextStep(2)"><span data-en="Next: Memory →" data-fr="Suivant : Mémoire →">Next: Memory →</span></button>
-      </div>
-    </div>
-
-    <!-- ═══ STEP 3 ═══ -->
-    <div class="panel" id="panel-3">
-      <div class="panel-label" data-en="Step 3 of 5" data-fr="Étape 3 sur 5">Step 3 of 5</div>
-      <div class="panel-title" data-en="Memory Snapshot" data-fr="Instantané Mémoire">Memory Snapshot</div>
-      <div class="panel-desc" data-en="First time? Leave everything blank — the AI starts fresh. Come back and fill this after your first session." data-fr="Première fois? Laissez tout vide — l'IA repart de zéro. Revenez remplir ceci après votre première session.">First time? Leave everything blank — the AI starts fresh. Come back and fill this after your first session.</div>
-
-      <div class="card">
-        <div class="card-header"><div class="card-icon icon-yellow">🧠</div>
-          <div><div class="card-title" data-en="Why this exists" data-fr="Pourquoi ça existe">Why this exists</div></div>
-        </div>
-        <div class="info-box" data-en="Every time you close a chat, the AI <strong style='color:var(--warn)'>forgets everything</strong>. This section is what you paste at the start of your next session so the AI picks up exactly where you left off — no repeating yourself." data-fr="Chaque fois que vous fermez un chat, l'IA <strong style='color:var(--warn)'>oublie tout</strong>. Cette section est ce que vous collez au début de votre prochaine session pour que l'IA reprenne exactement là où vous vous êtes arrêté.">Every time you close a chat, the AI <strong style="color:var(--warn)">forgets everything</strong>. This section is what you paste at the start of your next session so the AI picks up exactly where you left off.</div>
-        <!-- visual flow -->
-        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:12px">
-          <div style="background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.3);border-radius:7px;padding:7px 11px;font-size:11px;font-weight:600;color:var(--accent);text-align:center" data-en="Session 1<br>You work" data-fr="Session 1<br>Vous travaillez">Session 1<br>You work</div>
-          <div style="color:var(--muted);font-size:16px">→</div>
-          <div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:7px;padding:7px 11px;font-size:11px;font-weight:600;color:var(--warn);text-align:center" data-en="Close chat<br>AI forgets ❌" data-fr="Fermer chat<br>IA oublie ❌">Close chat<br>AI forgets ❌</div>
-          <div style="color:var(--muted);font-size:16px">→</div>
-          <div style="background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.25);border-radius:7px;padding:7px 11px;font-size:11px;font-weight:600;color:var(--accent2);text-align:center" data-en="Update this form" data-fr="Mettez à jour">Update this form</div>
-          <div style="color:var(--muted);font-size:16px">→</div>
-          <div style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);border-radius:7px;padding:7px 11px;font-size:11px;font-weight:600;color:var(--success);text-align:center" data-en="Session 2<br>AI remembers ✅" data-fr="Session 2<br>IA se souvient ✅">Session 2<br>AI remembers ✅</div>
+        <div class="adv-field full">
+          <label for="memNext" data-en="➡️ Next task" data-fr="➡️ Prochaine tâche">➡️ Next task</label>
+          <textarea id="memNext" oninput="rebuild()"></textarea>
         </div>
       </div>
+    </details>
 
-      <div class="card">
-        <div class="card-header"><div class="card-icon icon-green">📝</div>
-          <div><div class="card-title" data-en="Fill in what happened last session" data-fr="Remplissez ce qui s'est passé lors de la dernière session">Fill in what happened last session</div></div>
-        </div>
-        <div class="field">
-          <label data-en="📍 Where are we right now?" data-fr="📍 Où en sommes-nous?">📍 Where are we right now?</label>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:6px" data-en="One line summary of the current state" data-fr="Résumé en une ligne de l'état actuel">One line summary of the current state</div>
-          <input type="text" id="memStatus" oninput="updatePreview()"
-            data-ph-en="e.g. Phase 1 in progress — login UI done, API still needed"
-            data-ph-fr="ex. Phase 1 en cours — UI connexion faite, API encore nécessaire"
-            placeholder="e.g. Phase 1 in progress — login UI done, API still needed">
-        </div>
-        <div class="field">
-          <label data-en="✅ What did we finish last time?" data-fr="✅ Qu'avons-nous terminé la dernière fois?">✅ What did we finish last time?</label>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:6px" data-en="So the AI doesn't redo finished work" data-fr="Pour que l'IA ne refasse pas le travail déjà fait">So the AI doesn't redo finished work</div>
-          <input type="text" id="memLast" oninput="updatePreview()"
-            data-ph-en="e.g. Set up project folder and database schema"
-            data-ph-fr="ex. Structure du dossier projet et schéma de base de données"
-            placeholder="e.g. Set up project folder and database schema">
-        </div>
-        <div class="field">
-          <label data-en="🔒 What decisions are already locked in?" data-fr="🔒 Quelles décisions sont déjà prises?">🔒 What decisions are already locked in?</label>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:6px" data-en="Tools, technologies, approaches — things the AI should not re-question" data-fr="Outils, technologies, approches — choses que l'IA ne doit pas remettre en question">Tools, technologies, approaches — things the AI should not re-question</div>
-          <textarea id="memDecisions" oninput="updatePreview()" style="min-height:60px"
-            data-ph-en="e.g. Using React + FastAPI + PostgreSQL on AWS"
-            data-ph-fr="ex. Utilisation de React + FastAPI + PostgreSQL sur AWS"
-            placeholder="e.g. Using React + FastAPI + PostgreSQL on AWS"></textarea>
-        </div>
-        <div class="field">
-          <label data-en="➡️ What should we do next?" data-fr="➡️ Que devons-nous faire ensuite?">➡️ What should we do next?</label>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:6px" data-en="The first task for the new session" data-fr="La première tâche de la nouvelle session">The first task for the new session</div>
-          <textarea id="memNext" oninput="updatePreview()" style="min-height:60px"
-            data-ph-en="e.g. Build the API endpoint and connect it to the frontend"
-            data-ph-fr="ex. Créer l'endpoint API et le connecter au frontend"
-            placeholder="e.g. Build the API endpoint and connect it to the frontend"></textarea>
-        </div>
-      </div>
+    <!-- ── HISTORY ── -->
+    <details class="history">
+      <summary data-en="Recent prompts" data-fr="Prompts récents">Recent prompts</summary>
+      <div class="history-list" id="historyList"></div>
+      <p class="history-empty" id="historyEmpty" data-en="Nothing saved yet — prompts save automatically when you generate." data-fr="Rien d'enregistré — les prompts s'enregistrent automatiquement à la génération.">Nothing saved yet — prompts save automatically when you generate.</p>
+    </details>
+  </section>
+</main>
 
-      <div class="nav-btns">
-        <button class="btn btn-secondary" onclick="prevStep(3)">← <span data-en="Back" data-fr="Retour">Back</span></button>
-        <button class="btn btn-primary" onclick="generateAndGo()">⚡ <span data-en="Generate Prompt →" data-fr="Générer le Prompt →">Generate Prompt →</span></button>
-      </div>
-    </div>
-
-    <!-- ═══ STEP 4 ═══ -->
-    <div class="panel" id="panel-4">
-      <div class="panel-label" data-en="Step 4 of 5" data-fr="Étape 4 sur 5">Step 4 of 5</div>
-      <div class="panel-title" data-en="Your Prompt is Ready" data-fr="Votre Prompt est Prêt">Your Prompt is Ready</div>
-      <div class="panel-desc" data-en="Copy it and paste it at the start of any AI chat. Done." data-fr="Copiez-le et collez-le au début de n'importe quel chat IA. C'est tout.">Copy it and paste it at the start of any AI chat. Done.</div>
-
-      <div class="card">
-        <div class="card-header"><div class="card-icon icon-green">📋</div>
-          <div><div class="card-title" data-en="Generated Prompt" data-fr="Prompt Généré">Generated Prompt</div>
-          <div class="card-sub" data-en="Paste this into Claude or any AI" data-fr="Collez ceci dans Claude ou tout autre IA">Paste this into Claude or any AI</div></div>
-        </div>
-        <div class="output-box" id="generatedOutput">...</div>
-        <div class="btn-row">
-          <button class="btn btn-success" onclick="copyPrompt()">📋 <span data-en="Copy to Clipboard" data-fr="Copier">Copy to Clipboard</span></button>
-          <button class="btn btn-secondary" onclick="openInClaude()">🤖 <span data-en="Open in Claude" data-fr="Ouvrir dans Claude">Open in Claude</span></button>
-          <button class="btn btn-secondary btn-sm" onclick="saveToHistory()">💾 <span data-en="Save to History" data-fr="Sauvegarder">Save to History</span></button>
-        </div>
-      </div>
-
-      <div class="nav-btns">
-        <button class="btn btn-secondary" onclick="prevStep(4)">← <span data-en="Edit" data-fr="Modifier">Edit</span></button>
-        <button class="btn btn-outline" onclick="goToStep(5)"><span data-en="View Reference →" data-fr="Voir Référence →">View Reference →</span></button>
-      </div>
-    </div>
-
-    <!-- ═══ STEP 5 ═══ -->
-    <div class="panel" id="panel-5">
-      <div class="panel-label" data-en="Step 5 of 5" data-fr="Étape 5 sur 5">Step 5 of 5</div>
-      <div class="panel-title" data-en="Reference Guide" data-fr="Guide de Référence">Reference Guide</div>
-      <div class="panel-desc" data-en="Click any example to auto-fill the whole form instantly." data-fr="Cliquez sur un exemple pour remplir tout le formulaire instantanément.">Click any example to auto-fill the whole form instantly.</div>
-
-      <div class="card">
-        <div class="card-header"><div class="card-icon icon-yellow">💡</div>
-          <div><div class="card-title" data-en="Quick-Fill Examples" data-fr="Exemples Rapides">Quick-Fill Examples</div></div>
-        </div>
-        <div class="chips">
-          <div class="chip" onclick="fillExample('stock')">📈 <span data-en="Stock Screener" data-fr="Screener Boursier">Stock Screener</span></div>
-          <div class="chip" onclick="fillExample('automation')">🤖 <span data-en="Report Automation" data-fr="Automatisation Rapports">Report Automation</span></div>
-          <div class="chip" onclick="fillExample('portal')">👥 <span data-en="Community Portal" data-fr="Portail Communautaire">Community Portal</span></div>
-          <div class="chip" onclick="fillExample('dashboard')">📊 <span data-en="BI Dashboard" data-fr="Tableau de Bord BI">BI Dashboard</span></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><div class="card-icon icon-purple">📚</div>
-          <div><div class="card-title" data-en="Loop Pattern Guide" data-fr="Guide des Boucles">Loop Pattern Guide</div></div>
-        </div>
-        <div class="ref-block">
-          <div class="ref-title" style="color:var(--accent)">🔄 <span data-en="Core Loop" data-fr="Boucle Principale">Core Loop</span></div>
-          <ul class="ref-list">
-            <li data-en="One goal, one agent, one session" data-fr="Un objectif, un agent, une session">One goal, one agent, one session</li>
-            <li data-en="Steps run in sequence" data-fr="Les étapes sont séquentielles">Steps run in sequence</li>
-            <li data-en="Good for: reports, pages, scripts, emails" data-fr="Bon pour: rapports, pages, scripts, emails">Good for: reports, pages, scripts, emails</li>
-          </ul>
-        </div>
-        <div class="ref-block">
-          <div class="ref-title" style="color:var(--accent2)">🚀 <span data-en="Fleet Loop" data-fr="Boucle Flotte">Fleet Loop</span></div>
-          <ul class="ref-list">
-            <li data-en="Orchestrator + multiple specialists in parallel" data-fr="Orchestrateur + plusieurs spécialistes en parallèle">Orchestrator + multiple specialists in parallel</li>
-            <li data-en="Different expertise at the same time" data-fr="Différentes expertises simultanément">Different expertise at the same time</li>
-            <li data-en="Good for: full platforms, multi-module systems" data-fr="Bon pour: plateformes complètes, systèmes multi-modules">Good for: full platforms, multi-module systems</li>
-          </ul>
-        </div>
-        <div class="ref-block">
-          <div class="ref-title" style="color:var(--success)">✅ <span data-en="End of Session Checklist" data-fr="Liste de Fin de Session">End of Session Checklist</span></div>
-          <ul class="ref-list">
-            <li data-en="Save all outputs / files" data-fr="Sauvegarder tous les livrables / fichiers">Save all outputs / files</li>
-            <li data-en="Update Memory Snapshot (Step 3)" data-fr="Mettre à jour l'Instantané Mémoire (Étape 3)">Update Memory Snapshot (Step 3)</li>
-            <li data-en="Commit & push to Git if it's a code project" data-fr="Commit & push sur Git si c'est un projet code">Commit & push to Git if it's a code project</li>
-            <li data-en="Note what was decided + what's next" data-fr="Noter ce qui a été décidé + ce qui vient ensuite">Note what was decided + what's next</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="nav-btns">
-        <button class="btn btn-secondary" onclick="prevStep(5)">← <span data-en="Back" data-fr="Retour">Back</span></button>
-        <button class="btn btn-primary" onclick="goToStep(1);clearAll()">🔄 <span data-en="Start New Project" data-fr="Nouveau Projet">Start New Project</span></button>
-      </div>
-    </div>
-
-  </div><!-- end .main -->
-</div><!-- end .layout -->
-
-<div class="toast" id="toast"></div>
+<div id="toast" role="status"></div>
 
 <script>
-// ══════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════
-let currentStep = 1;
-let loopType = 'core';
-let lang = 'en';
-let specCount = 0;
-const specLabels = ['A','B','C','D','E'];
-let previewOpen = false;
+/* ═══════════════════════════════════════════════
+   LoopCraft v2 — one box, one button
+   Tries /api/generate (live AI) → falls back to
+   the built-in local inference engine.
+   ═══════════════════════════════════════════════ */
 
-// Goal suggestions by keyword
-const goalSuggestions = {
+var LANG = 'en';
+var STR = {
   en: {
-    dashboard: ['Show sales trends over time','Track KPIs across departments','Monitor real-time metrics'],
-    report: ['Generate a weekly PDF summary','Automate monthly reporting','Produce an executive summary'],
-    portal: ['Build a member login portal','Create a self-service user portal','Set up a community directory'],
-    automat: ['Automate email notifications','Schedule recurring data pulls','Auto-generate reports on a schedule'],
-    api: ['Build a REST API for my data','Connect two systems via API','Create endpoints for my database'],
+    whyCore: "Core Loop — this reads as one clear deliverable, so a single focused agent is faster and cheaper.",
+    whyFleet: "Fleet Loop — this mentions multiple workstreams, so the prompt sets up an orchestrator with specialists.",
+    whyRole: "Role and output were inferred from your wording.",
+    memYes: "Past work detected — a memory snapshot was added so the AI won't redo finished work.",
+    copied: "Copied to clipboard",
+    copyFail: "Couldn't copy — select the text manually",
+    aiOn: "Live AI engine connected",
+    aiOff: "Smart-template mode — instant and free. Live AI activates when the API is connected.",
+    building: "Building…",
+    build: "Build my prompt",
+    emptyBrief: "Describe what you're working on first — one sentence is enough.",
+    untitled: "Untitled project"
   },
   fr: {
-    dashboard: ['Afficher les tendances de ventes','Suivre les KPIs par département','Surveiller les métriques en temps réel'],
-    rapport: ['Générer un résumé PDF hebdomadaire','Automatiser les rapports mensuels','Produire un résumé exécutif'],
-    portail: ['Créer un portail de connexion membres','Construire un portail en libre-service','Mettre en place un répertoire communautaire'],
-    automat: ['Automatiser les notifications email','Planifier des extractions de données','Générer des rapports automatiquement'],
-    api: ['Construire une API REST pour mes données','Connecter deux systèmes via API','Créer des endpoints pour ma base de données'],
+    whyCore: "Core Loop — cela ressemble à un livrable unique et clair, donc un seul agent concentré est plus rapide et moins coûteux.",
+    whyFleet: "Fleet Loop — cela mentionne plusieurs chantiers, donc le prompt configure un orchestrateur avec des spécialistes.",
+    whyRole: "Le rôle et la sortie ont été déduits de votre formulation.",
+    memYes: "Travail passé détecté — un snapshot mémoire a été ajouté pour que l'IA ne refasse pas le travail terminé.",
+    copied: "Copié dans le presse-papiers",
+    copyFail: "Copie impossible — sélectionnez le texte manuellement",
+    aiOn: "Moteur IA en direct connecté",
+    aiOff: "Mode template intelligent — instantané et gratuit. Le mode IA s'activera quand l'API sera connectée.",
+    building: "Création…",
+    build: "Créer mon prompt",
+    emptyBrief: "Décrivez d'abord votre projet — une phrase suffit.",
+    untitled: "Projet sans titre"
   }
 };
 
-// ══════════════════════════════════════════
-// LANGUAGE
-// ══════════════════════════════════════════
+var STARTERS = {
+  en: [
+    "I need an internal dashboard that shows our monthly sales by region, pulling from a CSV export.",
+    "Continue my project from yesterday — I finished the login page, decisions locked: React + FastAPI. Next is the user profile page.",
+    "Automate a weekly Excel report: take the raw export, clean it, and summarize totals by department.",
+    "Plan a full client platform: member portal, payment page, admin dashboard, and email notifications."
+  ],
+  fr: [
+    "J'ai besoin d'un tableau de bord interne montrant les ventes mensuelles par région, à partir d'un export CSV.",
+    "Continuer mon projet d'hier — j'ai terminé la page de connexion, décisions verrouillées : React + FastAPI. La suite : la page de profil utilisateur.",
+    "Automatiser un rapport Excel hebdomadaire : prendre l'export brut, le nettoyer et résumer les totaux par département.",
+    "Planifier une plateforme client complète : portail membre, page de paiement, tableau de bord admin et notifications email."
+  ]
+};
+
+/* ── Language ── */
 function setLang(l) {
-  lang = l;
-  document.getElementById('btn-en').classList.toggle('active', l==='en');
-  document.getElementById('btn-fr').classList.toggle('active', l==='fr');
-  document.querySelectorAll('[data-en]').forEach(el => {
-    const v = el.getAttribute('data-'+l);
-    if (v && !el.id && !el.classList.contains('output-box') && !el.classList.contains('preview-box')) el.innerHTML = v;
+  LANG = l;
+  document.getElementById('btn-en').classList.toggle('active', l === 'en');
+  document.getElementById('btn-fr').classList.toggle('active', l === 'fr');
+  document.documentElement.lang = l;
+  document.querySelectorAll('[data-en]').forEach(function(el) {
+    var v = el.getAttribute('data-' + l);
+    if (v !== null) el.innerHTML = v;
   });
-  document.querySelectorAll('[data-ph-en]').forEach(el => {
-    el.placeholder = el.getAttribute('data-ph-'+l) || el.placeholder;
+  var ta = document.getElementById('brief');
+  ta.placeholder = ta.getAttribute('data-placeholder-' + l) || ta.placeholder;
+  updateEngineNote();
+  try { localStorage.setItem('lc_lang', l); } catch (e) {}
+}
+
+function useStarter(i) {
+  document.getElementById('brief').value = STARTERS[LANG][i];
+  document.getElementById('brief').focus();
+}
+
+/* ── Local inference engine (fallback + instant mode) ── */
+function inferLocal(text) {
+  var t = text.toLowerCase();
+  var r = {};
+
+  // Loop type: fleet if multiple workstreams are implied
+  var fleetHits = 0;
+  ['platform', 'plateforme', 'full ', 'complète', 'complete ', ' portal', 'portail',
+   'frontend and backend', 'ui + api', 'multiple', 'plusieurs', 'several',
+   'and payment', 'et paiement', 'notifications', 'admin'].forEach(function(k) {
+    if (t.indexOf(k) !== -1) fleetHits++;
   });
-  updatePreview();
-  renderHistory();
-}
+  var commaChunks = text.split(/,| and | et /).length;
+  r.loop = (fleetHits >= 2 || commaChunks >= 4) ? 'fleet' : 'core';
 
-// ══════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════
-function goToStep(n) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('panel-'+n).classList.add('active');
-  currentStep = n;
-  updateSidebar();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function nextStep(c) { goToStep(c+1); }
-function prevStep(c) { goToStep(c-1); }
-function generateAndGo() { generatePrompt(); goToStep(4); }
-
-function updateSidebar() {
-  for (let i=1;i<=5;i++) {
-    const ss = document.getElementById('ss'+i);
-    const sc = document.getElementById('sc'+i);
-    ss.classList.remove('active','done');
-    sc.textContent = i;
-    if (i < currentStep) { ss.classList.add('done'); sc.textContent = '✓'; }
-    else if (i === currentStep) { ss.classList.add('active'); }
-  }
-}
-
-// ══════════════════════════════════════════
-// LOOP
-// ══════════════════════════════════════════
-function setLoop(type) {
-  loopType = type;
-  const lcc = document.getElementById('lc-core');
-  const lcf = document.getElementById('lc-fleet');
-  const ft = document.getElementById('fleet-title');
-  if (type==='core') {
-    lcc.className='loop-card sel-core'; lcf.className='loop-card';
-    if(ft) ft.style.color='var(--muted)';
-    document.getElementById('loop-badge').style.color='var(--accent)';
-  } else {
-    lcf.className='loop-card sel-fleet'; lcc.className='loop-card';
-    if(ft) ft.style.color='var(--accent2)';
-    document.getElementById('loop-badge').style.color='var(--accent2)';
-  }
-  const badge = document.getElementById('loop-badge-text');
-  if (badge) {
-    const en = type==='core'?'Selected: Core Loop':'Selected: Fleet Loop';
-    const fr = type==='core'?'Sélectionné: Boucle Principale':'Sélectionné: Boucle Flotte';
-    badge.setAttribute('data-en',en); badge.setAttribute('data-fr',fr);
-    badge.textContent = lang==='fr'?fr:en;
-  }
-  document.getElementById('fleetSection').style.display = type==='fleet'?'block':'none';
-  if (type==='fleet' && specCount===0) { addSpecialist(); addSpecialist(); }
-  updatePreview();
-}
-
-function quizFeedback(type) {
-  const el = document.getElementById('quiz-result');
-  el.style.display='block';
-  if (type==='core') {
-    el.style.background='rgba(108,99,255,.1)'; el.style.color='var(--accent)'; el.style.padding='8px 12px'; el.style.borderRadius='6px'; el.style.marginTop='10px';
-    el.textContent = lang==='fr'?'✅ Boucle Principale sélectionnée. Un agent gérera tout.':'✅ Core Loop selected. One agent will handle everything.';
-  } else {
-    el.style.background='rgba(0,212,170,.1)'; el.style.color='var(--accent2)'; el.style.padding='8px 12px'; el.style.borderRadius='6px'; el.style.marginTop='10px';
-    el.textContent = lang==='fr'?'🚀 Boucle Flotte sélectionnée. Un orchestrateur coordonnera plusieurs spécialistes.':'🚀 Fleet Loop selected. An orchestrator will coordinate multiple specialists.';
-  }
-}
-
-// ══════════════════════════════════════════
-// SPECIALISTS
-// ══════════════════════════════════════════
-function addSpecialist() {
-  if (specCount>=5) return;
-  const c = document.getElementById('specialists-container');
-  const lbl = specLabels[specCount];
-  const d = document.createElement('div');
-  d.className='card specialist-card';
-  d.innerHTML=`<div class="spec-label">⚙️ Specialist ${lbl}</div>
-    <div class="row2">
-      <div class="field"><label>Role</label><input type="text" class="spec-role" placeholder="e.g. Backend Developer" oninput="updatePreview()"></div>
-      <div class="field"><label>Task</label><input type="text" class="spec-task" placeholder="e.g. Build API endpoints" oninput="updatePreview()"></div>
-    </div>
-    <div class="row2">
-      <div class="field"><label>Input Needed</label><input type="text" class="spec-input" placeholder="e.g. DB schema" oninput="updatePreview()"></div>
-      <div class="field"><label>Expected Output</label><input type="text" class="spec-output" placeholder="e.g. Working REST API" oninput="updatePreview()"></div>
-    </div>
-    <div class="field"><label>Success Criteria</label><input type="text" class="spec-criteria" placeholder="e.g. All endpoints return 200" oninput="updatePreview()"></div>`;
-  c.appendChild(d); specCount++;
-}
-
-// ══════════════════════════════════════════
-// COMPLETION CHECKS
-// ══════════════════════════════════════════
-function markCheck(id, val) {
-  const el = document.getElementById(id);
-  if (el) el.classList.toggle('show', val.trim().length > 2);
-  updatePreview();
-}
-function markField(id) {
-  const el = document.getElementById(id);
-  if (el && el.value.trim().length > 1) el.style.borderColor='var(--success)';
-  else if (el) el.style.borderColor='var(--border)';
-}
-
-// ══════════════════════════════════════════
-// ROLE & FORMAT PICKERS
-// ══════════════════════════════════════════
-function pickRole(el, enVal, frVal, chkId) {
-  document.querySelectorAll('.role-chip').forEach(c => {
-    c.style.borderColor='var(--border)'; c.style.color='var(--muted)'; c.style.background='transparent';
-  });
-  el.style.borderColor='var(--accent)'; el.style.color='var(--accent)'; el.style.background='rgba(108,99,255,.08)';
-  document.getElementById('role').value = lang==='fr'?frVal:enVal;
-  if (chkId) { const ck=document.getElementById(chkId); if(ck) ck.classList.add('show'); }
-  updatePreview();
-}
-
-function pickFormat(el, enVal, frVal, chkId) {
-  document.querySelectorAll('.fmt-chip').forEach(c => {
-    c.style.borderColor='var(--border)'; c.style.color='var(--muted)'; c.style.background='transparent';
-  });
-  el.style.borderColor='var(--accent2)'; el.style.color='var(--accent2)'; el.style.background='rgba(0,212,170,.08)';
-  document.getElementById('outputFormat').value = lang==='fr'?frVal:enVal;
-  if (chkId) { const ck=document.getElementById(chkId); if(ck) ck.classList.add('show'); }
-  updatePreview();
-}
-
-// ══════════════════════════════════════════
-// SKIP Q3
-// ══════════════════════════════════════════
-function skipQ3() {
-  const el = document.getElementById('outofscope');
-  el.value = lang==='fr'
-    ? 'Laisser l\'IA décider ce qui est hors périmètre selon le contexte.'
-    : 'Let the AI decide what is out of scope based on context.';
-  markCheck('chk3', el.value);
-}
-
-// ══════════════════════════════════════════
-// GOAL AUTO-SUGGESTIONS (#1)
-// ══════════════════════════════════════════
-function onGoalInput() {
-  const val = document.getElementById('goal').value.toLowerCase();
-  const pool = goalSuggestions[lang] || goalSuggestions.en;
-  let matches = [];
-  for (const [kw, sugs] of Object.entries(pool)) {
-    if (val.includes(kw) || kw.includes(val.slice(0,4))) matches = sugs;
-  }
-  const box = document.getElementById('sug-q1');
-  box.innerHTML = '';
-  if (val.length > 2 && matches.length) {
-    matches.slice(0,3).forEach(s => {
-      const pill = document.createElement('div');
-      pill.className = 'sug-pill';
-      pill.textContent = s;
-      pill.onclick = () => { document.getElementById('goal').value=s; box.innerHTML=''; markCheck('chk1',s); updatePreview(); };
-      box.appendChild(pill);
-    });
-  }
-  markCheck('chk1', val);
-  updatePreview();
-}
-
-// ══════════════════════════════════════════
-// LIVE PREVIEW TOGGLE (#2)
-// ══════════════════════════════════════════
-function togglePreview() {
-  previewOpen = !previewOpen;
-  document.getElementById('previewDrawer').classList.toggle('open', previewOpen);
-  const btn = document.getElementById('previewToggle');
-  btn.textContent = previewOpen ? (lang==='fr'?'FERMER':'CLOSE') : (lang==='fr'?'APERÇU':'PREVIEW');
-}
-
-function updatePreview() {
-  const p = buildPromptString();
-  const box = document.getElementById('livePreview');
-  if (box) box.textContent = p || (lang==='fr'?'Remplissez le formulaire pour voir votre prompt...':'Fill in the form to see your prompt build here...');
-}
-
-// ══════════════════════════════════════════
-// SAVE PROGRESS (#3)
-// ══════════════════════════════════════════
-function saveProgress() {
-  const data = {
-    projectName: v('projectName'), clientName: v('clientName'),
-    projectType: v('projectType'), loopType,
-    goal: v('goal'), success: v('success'), outofscope: v('outofscope'),
-    role: v('role'), outputFormat: v('outputFormat'),
-    memStatus: v('memStatus'), memLast: v('memLast'),
-    memDecisions: v('memDecisions'), memNext: v('memNext'),
-    lang, savedAt: new Date().toLocaleString()
+  // Role
+  var scores = {
+    'Developer': 0, 'Data Analyst': 0, 'AI Engineer': 0,
+    'Business Analyst': 0, 'Cloud / DevOps Engineer': 0, 'UX Designer': 0
   };
-  localStorage.setItem('pt_saved', JSON.stringify(data));
-  showToast(lang==='fr'?'💾 Progression sauvegardée!':'💾 Progress saved!');
-}
-
-function loadProgress() {
-  try {
-    const raw = localStorage.getItem('pt_saved');
-    if (!raw) return;
-    const d = JSON.parse(raw);
-    setField('projectName',d.projectName); setField('clientName',d.clientName);
-    setField('goal',d.goal); setField('success',d.success);
-    setField('outofscope',d.outofscope); setField('role',d.role);
-    setField('outputFormat',d.outputFormat); setField('memStatus',d.memStatus);
-    setField('memLast',d.memLast); setField('memDecisions',d.memDecisions);
-    setField('memNext',d.memNext);
-    if (d.loopType) setLoop(d.loopType);
-    if (d.lang) setLang(d.lang);
-    updatePreview();
-    showToast(lang==='fr'?'✅ Progression restaurée!':'✅ Progress restored!');
-  } catch(e){}
-}
-
-// ══════════════════════════════════════════
-// PROMPT HISTORY (#8)
-// ══════════════════════════════════════════
-function saveToHistory() {
-  const prompt = buildPromptString();
-  if (!prompt || prompt.length < 20) return;
-  const name = v('projectName') || 'Untitled';
-  const history = getHistory();
-  history.unshift({ name, prompt, date: new Date().toLocaleString() });
-  if (history.length > 5) history.pop();
-  localStorage.setItem('pt_history', JSON.stringify(history));
-  renderHistory();
-  showToast(lang==='fr'?'💾 Sauvegardé dans l\'historique!':'💾 Saved to history!');
-}
-
-function getHistory() {
-  try { return JSON.parse(localStorage.getItem('pt_history') || '[]'); } catch(e){ return []; }
-}
-
-function renderHistory() {
-  const list = document.getElementById('historyList');
-  const history = getHistory();
-  if (!history.length) {
-    list.innerHTML = `<div style="font-size:11px;color:var(--muted)" data-en="None saved yet" data-fr="Aucun sauvegardé">${lang==='fr'?'Aucun sauvegardé':'None saved yet'}</div>`;
-    return;
-  }
-  list.innerHTML = history.map((h,i) => `
-    <div class="hist-item" onclick="loadHistoryItem(${i})" title="${h.date}">
-      📋 ${h.name}
-    </div>`).join('');
-}
-
-function loadHistoryItem(i) {
-  const history = getHistory();
-  const item = history[i];
-  if (!item) return;
-  document.getElementById('generatedOutput').textContent = item.prompt;
-  document.getElementById('livePreview').textContent = item.prompt;
-  goToStep(4);
-  showToast(lang==='fr'?'✅ Prompt chargé depuis l\'historique!':'✅ Prompt loaded from history!');
-}
-
-// ══════════════════════════════════════════
-// SHARE LINK (#9)
-// ══════════════════════════════════════════
-function generateShareLink() {
-  const data = {
-    n: v('projectName'), c: v('clientName'), g: v('goal'),
-    s: v('success'), o: v('outofscope'), r: v('role'),
-    f: v('outputFormat'), l: loopType
+  var roleKeys = {
+    'Developer': ['code', 'script', 'app', 'api', 'bug', 'fix', 'build a', 'python', 'javascript', 'react', 'page', 'fonction', 'application', 'site'],
+    'Data Analyst': ['sql', 'data', 'données', 'report', 'rapport', 'excel', 'csv', 'analyz', 'analys', 'dashboard', 'tableau de bord', 'metrics', 'kpi'],
+    'AI Engineer': ['automat', 'workflow', ' ai ', "l'ia", 'prompt', 'agent', 'llm', 'claude', 'gpt'],
+    'Business Analyst': ['plan', 'requirement', 'exigence', 'document', 'proposal', 'proposition', 'process', 'processus', 'stakeholder'],
+    'Cloud / DevOps Engineer': ['deploy', 'déploi', 'aws', 'terraform', 'vercel', 'docker', 'server', 'serveur', 'infra', 'ci/cd', 'pipeline'],
+    'UX Designer': ['design', 'mockup', 'maquette', ' ui ', 'ux', 'interface', 'wireframe', 'figma']
   };
-  const encoded = btoa(encodeURIComponent(JSON.stringify(data)));
-  const url = window.location.href.split('?')[0] + '?d=' + encoded;
-  navigator.clipboard.writeText(url).then(() => {
-    showToast(lang==='fr'?'🔗 Lien copié dans le presse-papiers!':'🔗 Share link copied to clipboard!');
+  Object.keys(roleKeys).forEach(function(role) {
+    roleKeys[role].forEach(function(k) { if (t.indexOf(k) !== -1) scores[role]++; });
   });
-}
+  var best = 'Developer', bestScore = 0;
+  Object.keys(scores).forEach(function(role) {
+    if (scores[role] > bestScore) { best = role; bestScore = scores[role]; }
+  });
+  r.role = best;
 
-function loadFromURL() {
-  const params = new URLSearchParams(window.location.search);
-  const d = params.get('d');
-  if (!d) return;
-  try {
-    const data = JSON.parse(decodeURIComponent(atob(d)));
-    setField('projectName',data.n); setField('clientName',data.c);
-    setField('goal',data.g); setField('success',data.s);
-    setField('outofscope',data.o); setField('role',data.r);
-    setField('outputFormat',data.f);
-    if (data.l) setLoop(data.l);
-    updatePreview();
-    showToast(lang==='fr'?'✅ Projet chargé depuis le lien!':'✅ Project loaded from shared link!');
-  } catch(e){}
-}
+  // Format
+  r.format = 'Working code';
+  if (best === 'Data Analyst') r.format = 'Data analysis';
+  if (best === 'Business Analyst') r.format = 'Step-by-step action plan';
+  if (t.indexOf('sql') !== -1) r.format = 'SQL queries';
+  if (t.indexOf('report') !== -1 || t.indexOf('rapport') !== -1) r.format = 'Written report';
+  if (t.indexOf('email') !== -1 || t.indexOf('proposal') !== -1 || t.indexOf('proposition') !== -1) r.format = 'Email / proposal draft';
+  if (t.indexOf('plan ') === 0 || t.indexOf('planifier') !== -1) r.format = 'Step-by-step action plan';
 
-// ══════════════════════════════════════════
-// OPEN IN CLAUDE (#4)
-// ══════════════════════════════════════════
-function openInClaude() {
-  const prompt = buildPromptString();
-  if (!prompt) return;
-  const encoded = encodeURIComponent(prompt.substring(0, 2000));
-  window.open('https://claude.ai/new?q=' + encoded, '_blank');
-}
+  // Memory detection
+  var memHits = ['yesterday', 'hier', 'last session', 'dernière session', 'last time', 'la dernière fois',
+    'already', 'déjà', 'finished', 'terminé', "j'ai fini", 'continue', 'continuer', 'locked', 'verrouill', 'decisions'];
+  r.hasMemory = memHits.some(function(k) { return t.indexOf(k) !== -1; });
 
-// ══════════════════════════════════════════
-// BUILD PROMPT STRING
-// ══════════════════════════════════════════
-function buildPromptString() {
-  const name    = v('projectName') || '[PROJECT NAME]';
-  const client  = v('clientName')  || '[CLIENT]';
-  const type    = v('projectType') || 'Client Project';
-  const goal    = v('goal')        || '[DEFINE YOUR GOAL]';
-  const success = v('success')     || '[DEFINE SUCCESS CRITERIA]';
-  const oos     = v('outofscope')  || '[DEFINE OUT OF SCOPE]';
-  const role    = v('role')        || 'expert AI assistant';
-  const fmt     = v('outputFormat')|| 'Working code';
-  const mStat   = v('memStatus')   || 'New project';
-  const mLast   = v('memLast')     || 'N/A';
-  const mDec    = v('memDecisions')|| 'None yet';
-  const mNext   = v('memNext')     || 'TBD';
-  const isEn    = lang==='en';
-  const sep     = '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';
-  const date    = new Date().toLocaleDateString(isEn?'en-US':'fr-FR');
-
-  if (loopType==='core') {
-    return isEn
-? `# PRINCE TECH LLC — AGENT PROMPT
-# Project: ${name} | Client: ${client} | Type: ${type}
-# Loop: CORE LOOP | Generated: ${date}
-${sep}
-
-## ROLE
-You are an expert ${role}.
-
-${sep}
-
-## MEMORY (do not ignore)
-- Status: ${mStat}
-- Last completed: ${mLast}
-- Decisions locked: ${mDec}
-- Next / open questions: ${mNext}
-
-${sep}
-
-## CLOSED LOOP GOAL
-Goal: ${goal}
-
-Done when: ${success}
-
-Do NOT do this: ${oos}
-
-${sep}
-
-## THE LOOP — follow every step in order
-
-STEP 1 — DISCOVERY
-Find what needs doing. List all unknowns.
-Ask ONE clarifying question at a time. Do not assume.
-
-STEP 2 — PLANNING
-Break the goal into numbered subtasks.
-Get my approval before writing any code or output.
-
-STEP 3 — EXECUTION
-Execute the approved plan, step by step.
-Pause and ask if you hit any decision not in the plan.
-
-STEP 4 — VERIFICATION
-Check every output against the goal and success criteria.
-State: ✅ PASS or ❌ FAIL with reason.
-
-STEP 5 — ITERATION (only if FAIL)
-Fix only what failed. Re-verify. Don't redo passing steps.
-
-${sep}
-
-## CONSTRAINTS
-- Closed loop only — do not expand scope
-- Output format: ${fmt}
-- End every reply with → NEXT STEP: [what you will do next]`
-
-: `# PRINCE TECH LLC — PROMPT AGENT
-# Projet: ${name} | Client: ${client} | Type: ${type}
-# Boucle: BOUCLE PRINCIPALE | Généré le: ${date}
-${sep}
-
-## RÔLE
-Tu es un(e) expert(e) en ${role}.
-
-${sep}
-
-## MÉMOIRE (ne pas ignorer)
-- Statut: ${mStat}
-- Dernière étape: ${mLast}
-- Décisions verrouillées: ${mDec}
-- Questions ouvertes: ${mNext}
-
-${sep}
-
-## OBJECTIF BOUCLE FERMÉE
-Objectif: ${goal}
-
-Terminé quand: ${success}
-
-Ne PAS faire: ${oos}
-
-${sep}
-
-## LA BOUCLE — suivre chaque étape dans l'ordre
-
-ÉTAPE 1 — DÉCOUVERTE
-Identifier ce qui doit être fait. Lister les inconnus.
-Poser UNE question à la fois. Ne pas supposer.
-
-ÉTAPE 2 — PLANIFICATION
-Décomposer en sous-tâches numérotées.
-Obtenir mon approbation avant d'écrire du code.
-
-ÉTAPE 3 — EXÉCUTION
-Exécuter le plan approuvé, étape par étape.
-S'arrêter si une décision non couverte se présente.
-
-ÉTAPE 4 — VÉRIFICATION
-Vérifier chaque livrable. Indiquer: ✅ VALIDÉ ou ❌ ÉCHEC.
-
-ÉTAPE 5 — ITÉRATION (seulement si ÉCHEC)
-Corriger uniquement ce qui a échoué. Re-vérifier.
-
-${sep}
-
-## CONTRAINTES
-- Boucle fermée uniquement
-- Format de sortie: ${fmt}
-- Terminer chaque réponse avec → PROCHAINE ÉTAPE: [...]`;
-  } else {
-    // Fleet
-    const orch = v('orchInstructions') || (isEn?'Break into parallel workstreams and delegate.':'Diviser en flux parallèles et déléguer.');
-    const specs = document.querySelectorAll('.specialist-card');
-    let specBlock = '';
-    specs.forEach((s,i) => {
-      const r = s.querySelector('.spec-role')?.value||`Specialist ${specLabels[i]}`;
-      const t = s.querySelector('.spec-task')?.value||'';
-      const inp = s.querySelector('.spec-input')?.value||'';
-      const out = s.querySelector('.spec-output')?.value||'';
-      const crit = s.querySelector('.spec-criteria')?.value||'';
-      specBlock += isEn
-        ? `\nSPECIALIST ${specLabels[i]} — ${r}\n  Task: ${t}\n  Needs: ${inp}\n  Output: ${out}\n  Done when: ${crit}\n`
-        : `\nSPÉCIALISTE ${specLabels[i]} — ${r}\n  Tâche: ${t}\n  Besoin: ${inp}\n  Livrable: ${out}\n  Terminé quand: ${crit}\n`;
+  if (r.hasMemory) {
+    var parts = text.split(/[.!]\s+|—|;/);
+    var done = [], next = [], locked = [];
+    parts.forEach(function(p) {
+      var pl = p.toLowerCase();
+      if (/next|suite|now i|maintenant|todo|à faire/.test(pl)) next.push(p.trim());
+      else if (/finish|terminé|fini|done|complet|already|déjà/.test(pl)) done.push(p.trim());
+      if (/locked|verrouill|decided|décidé|décisions|using /.test(pl)) locked.push(p.trim());
     });
-    return isEn
-? `# PRINCE TECH LLC — FLEET LOOP PROMPT
-# Project: ${name} | Client: ${client} | Type: ${type}
-# Loop: FLEET LOOP | Generated: ${date}
-${sep}
+    r.memLast = done.join('. ');
+    r.memNext = next.join('. ');
+    r.memDecisions = locked.join('. ');
+    r.memStatus = parts[0] ? parts[0].trim() : '';
+  }
 
-## ORCHESTRATOR ROLE
-You are the ORCHESTRATOR. Own the goal. Delegate. Synthesize.
-Do NOT do the specialist work yourself.
+  // Goal = first sentence; project name = first few meaningful words
+  var firstSentence = text.split(/[.!?\n]/)[0].trim();
+  r.goal = firstSentence;
+  r.projectName = firstSentence.replace(/^(i need |i want |je veux |j'ai besoin d'|j'ai besoin de |build |create |créer |continue |continuer |automate |automatiser |plan |planifier )/i, '')
+    .split(/\s+/).slice(0, 5).join(' ');
+  r.projectName = r.projectName.charAt(0).toUpperCase() + r.projectName.slice(1);
+  r.doneWhen = '';
+  r.outOfScope = '';
+  return r;
+}
 
-${sep}
+/* ── Try live AI first, fall back to local ── */
+var AI_AVAILABLE = null; // unknown until first try
 
-## MEMORY
-- Status: ${mStat} | Last: ${mLast}
-- Locked: ${mDec} | Next: ${mNext}
-
-${sep}
-
-## GOAL
-${goal}
-Done when: ${success}
-Out of scope: ${oos}
-
-${sep}
-
-## ORCHESTRATOR INSTRUCTIONS
-${orch}
-
-${sep}
-
-## SPECIALISTS (each runs: Discovery→Plan→Execute→Verify)
-${specBlock}
-${sep}
-
-## FINAL CHECK
-[ ] All specialist outputs meet criteria
-[ ] No conflicts between outputs
-[ ] Combined result achieves the goal
-[ ] Ready to ship
-
-Output format: ${fmt}`
-
-: `# PRINCE TECH LLC — BOUCLE FLOTTE
-# Projet: ${name} | Client: ${client} | Type: ${type}
-# Boucle: FLOTTE | Généré le: ${date}
-${sep}
-
-## RÔLE ORCHESTRATEUR
-Tu es l'ORCHESTRATEUR. Possède l'objectif. Délègue. Synthétise.
-Ne pas faire le travail des spécialistes.
-
-${sep}
-
-## MÉMOIRE
-- Statut: ${mStat} | Dernière: ${mLast}
-- Verrouillé: ${mDec} | Suivant: ${mNext}
-
-${sep}
-
-## OBJECTIF
-${goal}
-Terminé quand: ${success}
-Hors périmètre: ${oos}
-
-${sep}
-
-## INSTRUCTIONS ORCHESTRATEUR
-${orch}
-
-${sep}
-
-## SPÉCIALISTES (chacun suit: Découverte→Plan→Exécution→Vérification)
-${specBlock}
-${sep}
-
-## VÉRIFICATION FINALE
-[ ] Tous les livrables répondent aux critères
-[ ] Pas de conflits entre les livrables
-[ ] Le résultat combiné atteint l'objectif
-[ ] Prêt à livrer
-
-Format de sortie: ${fmt}`;
+async function inferSmart(text) {
+  try {
+    var res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ brief: text, lang: LANG })
+    });
+    if (!res.ok) throw new Error('api unavailable');
+    var data = await res.json();
+    AI_AVAILABLE = true;
+    updateEngineNote();
+    return data; // expects same shape as inferLocal output
+  } catch (e) {
+    AI_AVAILABLE = false;
+    updateEngineNote();
+    return inferLocal(text);
   }
 }
 
-// ══════════════════════════════════════════
-// GENERATE
-// ══════════════════════════════════════════
-function generatePrompt() {
-  const p = buildPromptString();
-  document.getElementById('generatedOutput').textContent = p;
-  updatePreview();
+function updateEngineNote() {
+  var n = document.getElementById('engineNote');
+  if (AI_AVAILABLE === true) {
+    n.innerHTML = '<span class="dot ai"></span>' + STR[LANG].aiOn;
+  } else if (AI_AVAILABLE === false) {
+    n.innerHTML = '<span class="dot local"></span>' + STR[LANG].aiOff;
+  } else {
+    n.innerHTML = '';
+  }
 }
 
-// ══════════════════════════════════════════
-// COPY
-// ══════════════════════════════════════════
+/* ── Build the final prompt text ── */
+function buildPrompt(d) {
+  var lines = [];
+  var loopLabel = d.loop === 'fleet' ? 'FLEET LOOP (orchestrator + specialists)' : 'CORE LOOP (single focused agent)';
+
+  lines.push('# PROJECT: ' + (d.projectName || STR[LANG].untitled));
+  lines.push('');
+  lines.push('## ROLE');
+  lines.push('Act as an experienced ' + d.role + '. Think step by step, state assumptions, and ask before making irreversible choices.');
+  lines.push('');
+  lines.push('## LOOP PATTERN — ' + loopLabel);
+  if (d.loop === 'fleet') {
+    lines.push('Operate as an orchestrator. Break this project into workstreams, assign each to a specialist perspective, and reconcile their outputs into one coherent deliverable. Surface conflicts between workstreams before resolving them.');
+  } else {
+    lines.push('Work as a single focused agent toward one deliverable. Plan first, then execute step by step. Do not expand scope.');
+  }
+  lines.push('');
+  lines.push('## GOAL');
+  lines.push(d.goal || '(describe the goal)');
+  if (d.doneWhen) {
+    lines.push('');
+    lines.push('## DONE WHEN');
+    lines.push(d.doneWhen);
+  }
+  if (d.outOfScope) {
+    lines.push('');
+    lines.push('## OUT OF SCOPE — do NOT do these');
+    lines.push(d.outOfScope);
+  }
+  lines.push('');
+  lines.push('## OUTPUT FORMAT');
+  lines.push(d.format + '. Keep the answer structured and directly usable.');
+
+  var hasMem = d.memStatus || d.memLast || d.memDecisions || d.memNext;
+  if (hasMem) {
+    lines.push('');
+    lines.push('## MEMORY SNAPSHOT — context from previous sessions');
+    if (d.memStatus)    lines.push('- Current state: ' + d.memStatus);
+    if (d.memLast)      lines.push('- Already finished (do not redo): ' + d.memLast);
+    if (d.memDecisions) lines.push('- Locked decisions (do not re-question): ' + d.memDecisions);
+    if (d.memNext)      lines.push('- Next task: ' + d.memNext);
+  }
+  lines.push('');
+  lines.push('## FIRST MOVE');
+  lines.push('Start by confirming your understanding of the goal in 2-3 bullets, then begin.');
+  return lines.join('\n');
+}
+
+/* ── Main generate flow ── */
+async function generate() {
+  var brief = document.getElementById('brief').value.trim();
+  if (!brief) { toast(STR[LANG].emptyBrief); return; }
+
+  var btn = document.getElementById('goBtn');
+  btn.disabled = true;
+  btn.textContent = STR[LANG].building;
+
+  var d = await inferSmart(brief);
+
+  // Fill advanced fields
+  document.getElementById('projectName').value = d.projectName || '';
+  document.getElementById('loopType').value = d.loop || 'core';
+  document.getElementById('role').value = d.role || 'Developer';
+  document.getElementById('format').value = d.format || 'Working code';
+  document.getElementById('goal').value = d.goal || '';
+  document.getElementById('doneWhen').value = d.doneWhen || '';
+  document.getElementById('outOfScope').value = d.outOfScope || '';
+  document.getElementById('memStatus').value = d.memStatus || '';
+  document.getElementById('memLast').value = d.memLast || '';
+  document.getElementById('memDecisions').value = d.memDecisions || '';
+  document.getElementById('memNext').value = d.memNext || '';
+
+  rebuild();
+
+  // Receipt why-line
+  var why = (d.loop === 'fleet' ? STR[LANG].whyFleet : STR[LANG].whyCore) + ' ' + STR[LANG].whyRole;
+  var memShown = d.hasMemory || d.memStatus || d.memLast;
+  if (memShown) why += ' ' + STR[LANG].memYes;
+  document.getElementById('whyLine').textContent = why;
+  document.getElementById('chipMemoryWrap').style.display = memShown ? '' : 'none';
+
+  document.getElementById('result').classList.add('visible');
+  saveToHistory(brief);
+
+  btn.disabled = false;
+  btn.textContent = STR[LANG].build;
+  document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ── Rebuild prompt from advanced fields (edits regenerate live) ── */
+function rebuild() {
+  var d = {
+    projectName: document.getElementById('projectName').value,
+    loop: document.getElementById('loopType').value,
+    role: document.getElementById('role').value,
+    format: document.getElementById('format').value,
+    goal: document.getElementById('goal').value,
+    doneWhen: document.getElementById('doneWhen').value,
+    outOfScope: document.getElementById('outOfScope').value,
+    memStatus: document.getElementById('memStatus').value,
+    memLast: document.getElementById('memLast').value,
+    memDecisions: document.getElementById('memDecisions').value,
+    memNext: document.getElementById('memNext').value
+  };
+  document.getElementById('promptOut').textContent = buildPrompt(d);
+  // Sync chips
+  document.getElementById('chipLoop').textContent = d.loop === 'fleet' ? 'Fleet' : 'Core';
+  document.getElementById('chipRole').textContent = d.role;
+  var fmtShort = d.format.split(/[—-]/)[0].trim();
+  document.getElementById('chipFormat').textContent = fmtShort.length > 18 ? fmtShort.slice(0, 18) + '…' : fmtShort;
+}
+
+/* ── Chips open the advanced panel at the right field ── */
+function openAdvanced(fieldId) {
+  var panel = document.getElementById('advPanel');
+  panel.open = true;
+  var f = document.getElementById(fieldId);
+  if (f) { f.focus(); f.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+}
+
+/* ── Copy / Open ── */
 function copyPrompt() {
-  const text = document.getElementById('generatedOutput').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    showToast(lang==='fr'?'✅ Copié dans le presse-papiers!':'✅ Copied to clipboard!');
-  });
+  var text = document.getElementById('promptOut').textContent;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() { toast(STR[LANG].copied); }, function() { toast(STR[LANG].copyFail); });
+  } else {
+    toast(STR[LANG].copyFail);
+  }
+}
+function openInClaude() {
+  var text = document.getElementById('promptOut').textContent;
+  window.open('https://claude.ai/new?q=' + encodeURIComponent(text), '_blank');
 }
 
-// ══════════════════════════════════════════
-// EXAMPLES
-// ══════════════════════════════════════════
-function fillExample(key) {
-  const ex = {
-    stock:{
-      name:lang==='en'?'Live Stock Screener':'Screener Boursier en Direct',
-      client:'Prince Tech LLC',
-      goal:lang==='en'?'Build a live stock screener and comparison dashboard using FMP API, FastAPI, and React':'Construire un screener boursier en direct avec FMP API, FastAPI et React',
-      success:lang==='en'?'User can search 2+ tickers, see price, P/E, revenue YoY side-by-side, updates every 60s':'L\'utilisateur peut chercher 2+ tickers, voir prix, P/E, revenus côte à côte, mise à jour toutes les 60s',
-      oos:lang==='en'?'No portfolio tracking, no buy/sell signals, no user accounts in v1':'Pas de suivi de portefeuille, pas de signaux achat/vente, pas de comptes utilisateurs',
-      role:lang==='en'?'senior Python developer and data engineer':'développeur Python senior et ingénieur de données',
-      mStat:lang==='en'?'Architecture phase':'Phase d\'architecture',mLast:lang==='en'?'FMP API key obtained':'Clé API FMP obtenue',
-      mDec:'FastAPI + React + AWS Lambda',mNext:lang==='en'?'Build FMP API wrapper and first data endpoint':'Créer le wrapper API FMP'
-    },
-    automation:{
-      name:lang==='en'?'Weekly Report Automation':'Automatisation Rapport Hebdomadaire',
-      client:lang==='en'?'TBD Client':'Client à définir',
-      goal:lang==='en'?'Automate weekly report generation from internal DB and email PDF to stakeholders every Monday at 8am':'Automatiser la génération du rapport hebdomadaire et envoyer le PDF chaque lundi à 8h',
-      success:lang==='en'?'Report runs on schedule, PDF emailed correctly, zero errors in 3 consecutive test runs':'Le rapport s\'exécute selon le calendrier, PDF envoyé correctement, zéro erreur sur 3 tests',
-      oos:lang==='en'?'No real-time dashboards, no custom analytics UI':'Pas de tableaux de bord en temps réel',
-      role:lang==='en'?'Python automation engineer':'ingénieur en automatisation Python',
-      mStat:lang==='en'?'New project':'Nouveau projet',mLast:'N/A',
-      mDec:'Python + AWS Lambda + SES',mNext:lang==='en'?'Define DB connection and report template':'Définir la connexion BD'
-    },
-    portal:{
-      name:lang==='en'?'Community Membership Portal':'Portail d\'Adhésion Communautaire',
-      client:lang==='en'?'Community Association':'Association Communautaire',
-      goal:lang==='en'?'Build a membership portal with login, member directory, dues tracking, and event ticketing':'Construire un portail d\'adhésion avec connexion, répertoire membres, suivi des cotisations et billetterie',
-      success:lang==='en'?'Admins can add/edit members and track dues. Members can view their profile and event tickets.':'Les admins peuvent gérer les membres. Les membres peuvent voir leur profil et leurs billets.',
-      oos:lang==='en'?'No payment gateway in Phase 1':'Pas de passerelle de paiement en Phase 1',
-      role:lang==='en'?'full-stack developer':'développeur full-stack',
-      mStat:lang==='en'?'Phase 1 in progress':'Phase 1 en cours',mLast:lang==='en'?'Login and directory complete':'Connexion et répertoire terminés',
-      mDec:'React + Node.js + PostgreSQL',mNext:lang==='en'?'Build dues tracking module':'Construire le module de suivi des cotisations'
-    },
-    dashboard:{
-      name:lang==='en'?'BI Analytics Dashboard':'Tableau de Bord Analytique BI',
-      client:lang==='en'?'Internal / Client':'Interne / Client',
-      goal:lang==='en'?'Build an interactive BI dashboard showing KPIs, trends, and drill-down views from the data warehouse':'Construire un tableau de bord BI interactif avec KPIs, tendances et vues détaillées',
-      success:lang==='en'?'Stakeholders can filter by date and department, see 5 KPI cards, 3 charts, export to PDF':'Les parties prenantes peuvent filtrer, voir 5 KPIs, 3 graphiques, exporter en PDF',
-      oos:lang==='en'?'No real-time streaming, no self-serve data entry':'Pas de streaming en temps réel',
-      role:lang==='en'?'BI developer and data visualization specialist':'développeur BI et spécialiste en visualisation',
-      mStat:lang==='en'?'Requirements gathered':'Exigences recueillies',mLast:lang==='en'?'KPI definitions confirmed':'Définitions KPI confirmées',
-      mDec:'Power BI / Metabase on Snowflake',mNext:lang==='en'?'Build first dashboard page':'Construire la première page'
-    }
-  };
-  const e = ex[key]; if(!e) return;
-  setField('projectName',e.name); setField('clientName',e.client);
-  setField('goal',e.goal); setField('success',e.success);
-  setField('outofscope',e.oos); setField('role',e.role);
-  setField('memStatus',e.mStat); setField('memLast',e.mLast);
-  setField('memDecisions',e.mDec); setField('memNext',e.mNext);
-  markCheck('chk1',e.goal); markCheck('chk2',e.success);
-  markCheck('chk3',e.oos); markCheck('chk4','x'); markCheck('chk5','x');
-  goToStep(1);
-  updatePreview();
-  showToast(lang==='fr'?'✅ Formulaire rempli! Cliquez Suivant.':'✅ Form filled! Click Next to continue.');
+/* ── History (last 5 briefs, localStorage, fails silently) ── */
+function saveToHistory(brief) {
+  try {
+    var h = JSON.parse(localStorage.getItem('lc_history') || '[]');
+    h = h.filter(function(x) { return x !== brief; });
+    h.unshift(brief);
+    h = h.slice(0, 5);
+    localStorage.setItem('lc_history', JSON.stringify(h));
+    renderHistory();
+  } catch (e) {}
+}
+function renderHistory() {
+  try {
+    var h = JSON.parse(localStorage.getItem('lc_history') || '[]');
+    var list = document.getElementById('historyList');
+    var empty = document.getElementById('historyEmpty');
+    list.innerHTML = '';
+    empty.style.display = h.length ? 'none' : '';
+    h.forEach(function(brief) {
+      var b = document.createElement('button');
+      b.className = 'history-item';
+      b.textContent = brief;
+      b.onclick = function() {
+        document.getElementById('brief').value = brief;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('brief').focus();
+      };
+      list.appendChild(b);
+    });
+  } catch (e) {}
 }
 
-// ══════════════════════════════════════════
-// CLEAR ALL
-// ══════════════════════════════════════════
-function clearAll() {
-  document.querySelectorAll('input[type=text],textarea').forEach(el=>el.value='');
-  specCount=0;
-  document.getElementById('specialists-container').innerHTML='';
-  document.querySelectorAll('.q-check').forEach(c=>c.classList.remove('show'));
-  setLoop('core');
-  updatePreview();
+/* ── Toast ── */
+var toastTimer;
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2400);
 }
 
-// ══════════════════════════════════════════
-// UTILITIES
-// ══════════════════════════════════════════
-function v(id){ const el=document.getElementById(id); return el?el.value.trim():''; }
-function setField(id,val){ const el=document.getElementById(id); if(el) el.value=val||''; }
-function showToast(msg){
-  const t=document.getElementById('toast'); t.textContent=msg;
-  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800);
-}
-
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
-window.onload = () => {
-  // Mark Developer and Code as default selected
-  const firstRole = document.querySelector('.role-chip');
-  if (firstRole) { firstRole.style.borderColor='var(--accent)'; firstRole.style.color='var(--accent)'; firstRole.style.background='rgba(108,99,255,.08)'; }
-  document.getElementById('chk4').classList.add('show');
-  loadFromURL();
-  loadProgress();
+/* ── Init ── */
+(function() {
+  try {
+    var saved = localStorage.getItem('lc_lang');
+    if (saved === 'fr') setLang('fr');
+  } catch (e) {}
   renderHistory();
-  updatePreview();
-};
+  // Ctrl/Cmd+Enter generates
+  document.getElementById('brief').addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') generate();
+  });
+})();
 </script>
 </body>
 </html>

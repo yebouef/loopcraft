@@ -1,792 +1,487 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LoopCraft — Describe it. Get your prompt.</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>LoopCraft — Build Better AI Prompts</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #0f1117;
-    --surface: #1a1d27;
-    --surface-2: #21242f;
-    --border: #2a2d3e;
-    --text: #e2e8f0;
-    --muted: #64748b;
-    --accent: #6c63ff;
-    --accent-soft: rgba(108, 99, 255, 0.14);
-    --success: #22c55e;
-    --warn: #f59e0b;
-    --radius: 10px;
-    --sans: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
-  }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: var(--sans);
-    background: var(--bg);
-    color: var(--text);
-    font-size: 16px;
-    line-height: 1.6;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation: none !important; transition: none !important; }
-  }
-
-  /* ── HEADER ── */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 24px;
-    border-bottom: 1px solid var(--border);
-  }
-  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
-  .brand-mark {
-    width: 30px; height: 30px; border-radius: 8px;
-    background: linear-gradient(135deg, var(--accent), #9b8cff);
-    display: grid; place-items: center;
-    font-weight: 700; font-size: 15px; color: #fff;
-  }
-  .brand-name { font-weight: 600; font-size: 17px; letter-spacing: -0.01em; }
-  .brand-name span { color: var(--accent); }
-  .header-right { display: flex; align-items: center; gap: 14px; }
-  .lang-toggle {
-    display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
-  }
-  .lang-toggle button {
-    background: transparent; border: none; color: var(--muted);
-    font-family: var(--sans); font-size: 13px; font-weight: 600;
-    padding: 6px 12px; cursor: pointer; transition: background 0.15s, color 0.15s;
-  }
-  .lang-toggle button.active { background: var(--accent-soft); color: var(--accent); }
-  .lang-toggle button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-  .home-link { color: var(--muted); font-size: 13.5px; text-decoration: none; }
-  .home-link:hover { color: var(--text); }
-
-  /* ── MAIN COLUMN ── */
-  main {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 56px 24px 96px;
-  }
-
-  .hero-title {
-    font-size: clamp(28px, 5vw, 40px);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.15;
-    text-align: center;
-  }
-  .hero-title em { font-style: normal; color: var(--accent); }
-  .hero-sub {
-    text-align: center;
-    color: var(--muted);
-    font-size: 16px;
-    margin: 14px auto 40px;
-    max-width: 520px;
-  }
-
-  /* ── THE ONE BOX ── */
-  .composer {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 8px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .composer:focus-within {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
-  }
-  .composer textarea {
-    width: 100%;
-    background: transparent;
-    border: none;
-    resize: vertical;
-    min-height: 130px;
-    padding: 14px 14px 6px;
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 16px;
-    line-height: 1.55;
-  }
-  .composer textarea:focus { outline: none; }
-  .composer textarea::placeholder { color: var(--muted); opacity: 0.85; }
-  .composer-bar {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 12px; padding: 6px 8px 6px 14px;
-  }
-  .composer-hint { color: var(--muted); font-size: 12.5px; }
-  .btn {
-    font-family: var(--sans);
-    font-weight: 600;
-    font-size: 15px;
-    border: none;
-    border-radius: 9px;
-    padding: 11px 22px;
-    cursor: pointer;
-    transition: transform 0.12s, filter 0.15s, background 0.15s;
-  }
-  .btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-  .btn:active { transform: scale(0.98); }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-primary:hover { filter: brightness(1.12); }
-  .btn-primary:disabled { opacity: 0.55; cursor: wait; }
-  .btn-ghost {
-    background: transparent; color: var(--muted);
-    border: 1px solid var(--border); font-size: 13.5px; padding: 8px 14px;
-  }
-  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
-
-  /* ── EXAMPLE CHIPS ── */
-  .starters { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 18px; }
-  .starter {
-    background: transparent; border: 1px solid var(--border); color: var(--muted);
-    border-radius: 999px; padding: 7px 14px; font-family: var(--sans);
-    font-size: 13px; cursor: pointer; transition: color 0.15s, border-color 0.15s;
-  }
-  .starter:hover { color: var(--text); border-color: var(--accent); }
-  .starter:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-  /* ── RESULT ── */
-  #result { display: none; margin-top: 44px; }
-  #result.visible { display: block; animation: rise 0.35s ease; }
-  @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-
-  .receipt-label {
-    font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
-  }
-  .receipt { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
-  .chip {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 999px; padding: 6px 13px;
-    font-size: 13px; color: var(--text); font-family: var(--sans);
-    cursor: pointer; transition: border-color 0.15s;
-  }
-  .chip:hover { border-color: var(--accent); }
-  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .chip b { color: var(--accent); font-weight: 600; }
-  .chip .pencil { color: var(--muted); font-size: 11px; }
-  .receipt-why { color: var(--muted); font-size: 13.5px; margin-bottom: 22px; }
-
-  .prompt-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-  .prompt-head {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 16px; border-bottom: 1px solid var(--border);
-    background: var(--surface-2);
-    flex-wrap: wrap; gap: 8px;
-  }
-  .prompt-head-title { font-size: 13px; font-weight: 600; color: var(--muted); }
-  .prompt-actions { display: flex; gap: 8px; }
-  pre#promptOut {
-    font-family: var(--mono);
-    font-size: 13px;
-    line-height: 1.65;
-    padding: 20px;
-    white-space: pre-wrap;
-    word-break: break-word;
-    max-height: 480px;
-    overflow-y: auto;
-    color: #cdd6e4;
-  }
-
-  /* ── ADVANCED PANEL ── */
-  details.advanced { margin-top: 26px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
-  details.advanced summary {
-    cursor: pointer; padding: 14px 18px; font-weight: 600; font-size: 14.5px;
-    color: var(--muted); list-style: none; display: flex; align-items: center; gap: 8px;
-  }
-  details.advanced summary::-webkit-details-marker { display: none; }
-  details.advanced summary::before { content: '▸'; transition: transform 0.2s; color: var(--accent); }
-  details.advanced[open] summary::before { transform: rotate(90deg); }
-  details.advanced summary:hover { color: var(--text); }
-  .adv-grid { padding: 6px 18px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .adv-field { display: flex; flex-direction: column; gap: 6px; }
-  .adv-field.full { grid-column: 1 / -1; }
-  .adv-field label { font-size: 12.5px; font-weight: 600; color: var(--muted); }
-  .adv-field input, .adv-field select, .adv-field textarea {
-    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-    color: var(--text); font-family: var(--sans); font-size: 14px; padding: 9px 12px;
-  }
-  .adv-field textarea { resize: vertical; min-height: 60px; }
-  .adv-field input:focus, .adv-field select:focus, .adv-field textarea:focus {
-    outline: none; border-color: var(--accent);
-  }
-  .adv-divider {
-    grid-column: 1 / -1; font-size: 11.5px; font-weight: 600;
-    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
-    padding-top: 8px; border-top: 1px solid var(--border);
-  }
-
-  /* ── HISTORY ── */
-  details.history { margin-top: 18px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
-  details.history summary {
-    cursor: pointer; padding: 13px 18px; font-weight: 600; font-size: 14px;
-    color: var(--muted); list-style: none;
-  }
-  details.history summary::-webkit-details-marker { display: none; }
-  details.history summary:hover { color: var(--text); }
-  .history-list { padding: 0 18px 16px; display: flex; flex-direction: column; gap: 8px; }
-  .history-item {
-    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-    padding: 10px 14px; font-size: 13.5px; color: var(--muted); cursor: pointer;
-    text-align: left; font-family: var(--sans);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .history-item:hover { color: var(--text); border-color: var(--accent); }
-  .history-empty { color: var(--muted); font-size: 13px; padding: 0 18px 16px; }
-
-  /* ── TOAST ── */
-  #toast {
-    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
-    background: var(--surface-2); border: 1px solid var(--border); color: var(--text);
-    padding: 11px 20px; border-radius: 10px; font-size: 14px; font-weight: 500;
-    opacity: 0; transition: transform 0.25s ease, opacity 0.25s ease; pointer-events: none; z-index: 50;
-  }
-  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-  /* ── ENGINE STATUS ── */
-  .engine-note {
-    text-align: center; margin-top: 10px; font-size: 12px; color: var(--muted);
-  }
-  .engine-note .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
-  .dot.ai { background: var(--success); }
-  .dot.local { background: var(--warn); }
-
-  @media (max-width: 620px) {
-    .adv-grid { grid-template-columns: 1fr; }
-    main { padding-top: 36px; }
-    .composer-bar { flex-direction: column; align-items: stretch; }
-    .composer-hint { text-align: center; }
-    .btn-primary { width: 100%; }
-  }
+:root{--accent:#6c63ff;--accent2:#00d4aa;--warn:#f59e0b;--success:#22c55e;--radius:12px;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+[data-theme="dark"]{--bg:#0f1117;--bg2:#1a1d27;--bg3:#22263a;--border:#2a2d3e;--text:#e2e8f0;--muted:#64748b;--card:#1a1d27}
+[data-theme="light"]{--bg:#f8fafc;--bg2:#ffffff;--bg3:#f1f5f9;--border:#e2e8f0;--text:#0f172a;--muted:#64748b;--card:#ffffff}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;transition:background .3s,color .3s}
+a{text-decoration:none;color:inherit}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;transition:background .3s}
+.nav-logo{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800;letter-spacing:-.5px}
+.logo-icon{width:34px;height:34px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-size:14px;font-weight:500;color:var(--muted);transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.theme-btn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;color:var(--muted);transition:all .2s}
+.lang-toggle{display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-btn{padding:5px 12px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.lang-btn.active{background:var(--accent);color:#fff}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#5a52e0;transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-lg{padding:14px 32px;font-size:16px}.btn-xl{padding:16px 40px;font-size:17px}
+.btn-white{background:#fff;color:var(--accent);font-weight:700}.btn-white:hover{background:#f0efff;transform:translateY(-2px)}
+section{padding:100px 40px}
+.container{max-width:1100px;margin:0 auto}
+/* HERO */
+.hero{padding-top:160px;padding-bottom:100px;text-align:center;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.hero-blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.12}
+.blob1{width:500px;height:500px;background:var(--accent);top:-100px;left:-100px}
+.blob2{width:400px;height:400px;background:var(--accent2);bottom:-80px;right:-80px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.25);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.5px;margin-bottom:24px;text-transform:uppercase}
+.hero h1{font-size:clamp(38px,6vw,72px);font-weight:900;line-height:1.08;letter-spacing:-2px;margin-bottom:24px}
+.grad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(16px,2vw,20px);color:var(--muted);max-width:600px;margin:0 auto 40px;line-height:1.7}
+.hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+.hero-social{font-size:13px;color:var(--muted)}
+.hero-social strong{color:var(--text)}
+/* MOCKUP */
+.mockup-wrap{max-width:820px;margin:56px auto 0}
+.mockup-browser{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.35)}
+.mockup-bar{background:var(--bg3);padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.mockup-dot{width:12px;height:12px;border-radius:50%}
+.mockup-url{flex:1;background:var(--bg2);border-radius:6px;padding:5px 12px;font-size:12px;color:var(--muted);margin:0 12px}
+.mockup-body{padding:24px;display:grid;grid-template-columns:160px 1fr;gap:16px;min-height:260px}
+.mockup-sidebar{background:var(--bg3);border-radius:10px;padding:14px}
+.mockup-step{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:7px;margin-bottom:4px}
+.mockup-step.active-step{background:rgba(108,99,255,.12)}
+.m-circle{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.m-circle.done{background:var(--success)}
+.m-label{font-size:11px;font-weight:600;color:var(--muted)}
+.mockup-step.active-step .m-label{color:var(--text)}
+.mockup-main{display:flex;flex-direction:column;gap:10px}
+.m-q{background:var(--bg3);border-radius:9px;padding:14px}
+.m-q-text{font-size:13px;font-weight:700;margin-bottom:6px}
+.m-q-hint{font-size:11px;color:var(--muted);margin-bottom:8px}
+.m-input{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--text);width:100%}
+.m-tiles{display:flex;gap:6px;flex-wrap:wrap}
+.m-tile{padding:5px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:11px;font-weight:600;color:var(--muted)}
+.m-tile.sel{border-color:var(--accent);color:var(--accent);background:rgba(108,99,255,.08)}
+/* LOGOS */
+.logos{padding:48px 40px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center}
+.logos-label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:24px}
+.logos-row{display:flex;align-items:center;justify-content:center;gap:48px;flex-wrap:wrap}
+.logo-pill{font-size:14px;font-weight:700;color:var(--muted);opacity:.45}
+/* SECTION HEADER */
+.section-label{font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;text-align:center}
+.section-title{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-1px;text-align:center;margin-bottom:16px;line-height:1.15}
+.section-sub{font-size:16px;color:var(--muted);text-align:center;max-width:560px;margin:0 auto 56px;line-height:1.7}
+/* STEPS */
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.step-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:border-color .2s}
+.step-card:hover{border-color:var(--accent)}
+.step-num-big{font-size:48px;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px}
+.step-card h3{font-size:17px;font-weight:700;margin-bottom:8px}
+.step-card p{font-size:14px;color:var(--muted);line-height:1.65}
+/* LOOP */
+.loop-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px}
+.loop-card{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:28px}
+.loop-card.core{border-color:rgba(108,99,255,.3);background:rgba(108,99,255,.04)}
+.loop-card.fleet{border-color:rgba(0,212,170,.3);background:rgba(0,212,170,.04)}
+.loop-icon{font-size:32px;margin-bottom:12px}
+.loop-card h3{font-size:18px;font-weight:800;margin-bottom:8px}
+.loop-card.core h3{color:var(--accent)}.loop-card.fleet h3{color:var(--accent2)}
+.loop-card p{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:14px}
+.loop-tag{display:inline-block;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600}
+.loop-tag.core{background:rgba(108,99,255,.12);color:var(--accent)}
+.loop-tag.fleet{background:rgba(0,212,170,.12);color:var(--accent2)}
+/* FEATURES */
+.features-bg{background:var(--bg2)}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.feat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:all .2s}
+.feat-card:hover{border-color:var(--accent2);transform:translateY(-2px)}
+.feat-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px}
+.fi-p{background:rgba(108,99,255,.15)}.fi-g{background:rgba(0,212,170,.15)}.fi-y{background:rgba(245,158,11,.15)}.fi-b{background:rgba(59,130,246,.15)}.fi-pk{background:rgba(236,72,153,.15)}.fi-o{background:rgba(249,115,22,.15)}
+.feat-card h3{font-size:15px;font-weight:700;margin-bottom:6px}
+.feat-card p{font-size:13px;color:var(--muted);line-height:1.6}
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:start}
+.price-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:all .2s}
+.price-card.featured{border-color:var(--accent);background:rgba(108,99,255,.05);box-shadow:0 0 0 1px var(--accent)}
+.price-badge{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:14px;letter-spacing:.4px}
+.price-name{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.price-amount{font-size:44px;font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:4px}
+.price-amount span{font-size:18px;font-weight:600;color:var(--muted);letter-spacing:0}
+.price-per{font-size:12px;color:var(--muted);margin-bottom:20px}
+.price-divider{height:1px;background:var(--border);margin:18px 0}
+.pf{list-style:none;margin-bottom:24px}
+.pf li{font-size:13px;color:var(--muted);padding:5px 0;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.pf li::before{content:"✓";color:var(--success);font-weight:700;flex-shrink:0}
+.pf li.off{opacity:.45}.pf li.off::before{content:"–";color:var(--muted)}
+.price-cta{display:block;width:100%;padding:12px;border-radius:8px;font-size:14px;font-weight:600;text-align:center;cursor:pointer;border:none;transition:all .2s}
+.pc-p{background:var(--accent);color:#fff}.pc-p:hover{background:#5a52e0}
+.pc-o{background:transparent;color:var(--text);border:1.5px solid var(--border)}.pc-o:hover{border-color:var(--accent);color:var(--accent)}
+/* TESTIMONIALS */
+.testi-bg{background:var(--bg2)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.testi-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.testi-stars{color:var(--warn);font-size:14px;margin-bottom:12px}
+.testi-text{font-size:14px;color:var(--text);line-height:1.7;margin-bottom:16px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
+.testi-name{font-size:13px;font-weight:700}.testi-role{font-size:12px;color:var(--muted)}
+/* FAQ */
+.faq-list{max-width:680px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--border);padding:20px 0;cursor:pointer}
+.faq-q{display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:600}
+.faq-icon{font-size:20px;color:var(--accent);transition:transform .2s;flex-shrink:0;margin-left:16px}
+.faq-a{font-size:14px;color:var(--muted);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
+.faq-item.open .faq-a{max-height:200px;padding-top:12px}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+/* CTA BANNER */
+.cta-banner{background:linear-gradient(135deg,var(--accent) 0%,#8b5cf6 50%,var(--accent2) 100%);padding:80px 40px;text-align:center;border-radius:20px;margin:0 40px 80px}
+.cta-banner h2{font-size:clamp(28px,4vw,44px);font-weight:900;color:#fff;letter-spacing:-1px;margin-bottom:16px}
+.cta-banner p{font-size:17px;color:rgba(255,255,255,.8);margin-bottom:36px}
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40px 32px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-brand-logo{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.footer-brand-logo .logo-icon{width:28px;height:28px;font-size:15px}
+.footer-brand-logo span{font-size:16px;font-weight:800}
+.footer-brand p{font-size:13px;color:var(--muted);line-height:1.65;max-width:240px}
+.footer-col h4{font-size:12px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
+.footer-col a{display:block;font-size:13px;color:var(--muted);margin-bottom:8px;transition:color .2s}
+.footer-col a:hover{color:var(--text)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:24px;font-size:12px;color:var(--muted)}
+.footer-bottom a{color:var(--accent);font-weight:600}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px;max-width:440px;width:90%;position:relative;transform:translateY(20px);transition:transform .3s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)}
+.modal h2{font-size:22px;font-weight:800;margin-bottom:8px}
+.modal p{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6}
+.modal-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:8px;font-size:14px;outline:none;margin-bottom:12px;font-family:var(--sans)}
+.modal-input:focus{border-color:var(--accent)}
+.modal-success{display:none;text-align:center;padding:16px 0}
+.modal-success .big{font-size:52px;margin-bottom:14px}
+.modal-success h3{font-size:20px;font-weight:800;margin-bottom:8px}
+.modal-success p{font-size:14px;color:var(--muted);line-height:1.6}
+/* MOBILE */
+@media(max-width:768px){
+  nav{padding:0 20px}.nav-links{display:none}
+  section{padding:64px 20px}
+  .steps-grid,.features-grid,.testi-grid,.pricing-grid,.loop-grid,.footer-grid{grid-template-columns:1fr}
+  .cta-banner{margin:0 20px 60px;padding:56px 24px}
+  .mockup-body{grid-template-columns:1fr}.mockup-sidebar{display:none}
+}
 </style>
 </head>
 <body>
 
-<header>
-  <a class="brand" href="index.html">
-    <div class="brand-mark">L</div>
-    <div class="brand-name">Loop<span>Craft</span></div>
-  </a>
-  <div class="header-right">
-    <a class="home-link" href="index.html" data-en="← Home" data-fr="← Accueil">← Home</a>
-    <div class="lang-toggle" role="group" aria-label="Language">
-      <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
-      <button id="btn-fr" onclick="setLang('fr')">FR</button>
-    </div>
+<nav id="navbar">
+  <div class="nav-logo"><div class="logo-icon">🔄</div>Loop<span>Craft</span></div>
+  <div class="nav-links">
+    <a href="#how" data-en="How it works" data-fr="Comment ça marche">How it works</a>
+    <a href="#features" data-en="Features" data-fr="Fonctionnalités">Features</a>
+    <a href="#pricing" data-en="Pricing" data-fr="Tarifs">Pricing</a>
+    <a href="#faq" data-en="FAQ" data-fr="FAQ">FAQ</a>
   </div>
-</header>
-
-<main>
-  <h1 class="hero-title" data-en="Describe it. <em>Get your prompt.</em>" data-fr="Décrivez-le. <em>Recevez votre prompt.</em>">Describe it. <em>Get your prompt.</em></h1>
-  <p class="hero-sub" data-en="Tell LoopCraft what you're working on — like you'd text a colleague. It figures out the setup and builds a structured AI prompt for you." data-fr="Dites à LoopCraft sur quoi vous travaillez — comme un message à un collègue. Il détermine la configuration et construit un prompt IA structuré pour vous.">Tell LoopCraft what you're working on — like you'd text a colleague. It figures out the setup and builds a structured AI prompt for you.</p>
-
-  <div class="composer">
-    <textarea id="brief" data-placeholder-en="e.g. I need a Python script that pulls stock data from an API and scores each stock. Yesterday I finished the API connection — next is the scoring logic." data-placeholder-fr="ex. J'ai besoin d'un script Python qui récupère des données boursières via une API et note chaque action. Hier j'ai terminé la connexion API — la suite c'est la logique de scoring." placeholder="e.g. I need a Python script that pulls stock data from an API and scores each stock. Yesterday I finished the API connection — next is the scoring logic."></textarea>
-    <div class="composer-bar">
-      <span class="composer-hint" data-en="One or two sentences is enough. Mention past work and it builds your memory snapshot too." data-fr="Une ou deux phrases suffisent. Mentionnez le travail passé et il construit aussi votre snapshot mémoire.">One or two sentences is enough. Mention past work and it builds your memory snapshot too.</span>
-      <button class="btn btn-primary" id="goBtn" onclick="generate()" data-en="Build my prompt" data-fr="Créer mon prompt">Build my prompt</button>
+  <div class="nav-right">
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')" id="btn-en">EN</button>
+      <button class="lang-btn" onclick="setLang('fr')" id="btn-fr">FR</button>
     </div>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️ Light</button>
+    <button class="btn btn-ghost" style="padding:8px 18px" onclick="openModal()" data-en="Sign in" data-fr="Se connecter">Sign in</button>
+    <button class="btn btn-primary" onclick="openModal()" data-en="Get started free" data-fr="Commencer gratuitement">Get started free</button>
   </div>
+</nav>
 
-  <div class="starters">
-    <button class="starter" onclick="useStarter(0)" data-en="Build a dashboard" data-fr="Créer un tableau de bord">Build a dashboard</button>
-    <button class="starter" onclick="useStarter(1)" data-en="Continue yesterday's project" data-fr="Continuer le projet d'hier">Continue yesterday's project</button>
-    <button class="starter" onclick="useStarter(2)" data-en="Automate a report" data-fr="Automatiser un rapport">Automate a report</button>
-    <button class="starter" onclick="useStarter(3)" data-en="Plan a full platform" data-fr="Planifier une plateforme complète">Plan a full platform</button>
-  </div>
-
-  <p class="engine-note" id="engineNote"></p>
-
-  <!-- ── RESULT ── -->
-  <section id="result" aria-live="polite">
-    <p class="receipt-label" data-en="What LoopCraft decided — tap any chip to change it" data-fr="Ce que LoopCraft a décidé — touchez une puce pour la modifier">What LoopCraft decided — tap any chip to change it</p>
-    <div class="receipt">
-      <button class="chip" onclick="openAdvanced('loopType')"><span data-en="Loop" data-fr="Boucle">Loop</span>:&nbsp;<b id="chipLoop">Core</b> <span class="pencil">✎</span></button>
-      <button class="chip" onclick="openAdvanced('role')"><span data-en="Role" data-fr="Rôle">Role</span>:&nbsp;<b id="chipRole">Developer</b> <span class="pencil">✎</span></button>
-      <button class="chip" onclick="openAdvanced('format')"><span data-en="Output" data-fr="Sortie">Output</span>:&nbsp;<b id="chipFormat">Code</b> <span class="pencil">✎</span></button>
-      <button class="chip" id="chipMemoryWrap" style="display:none" onclick="openAdvanced('memStatus')"><span data-en="Memory" data-fr="Mémoire">Memory</span>:&nbsp;<b data-en="detected" data-fr="détectée">detected</b> <span class="pencil">✎</span></button>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"><div class="hero-blob blob1"></div><div class="hero-blob blob2"></div></div>
+  <div class="container" style="position:relative;z-index:1">
+    <div class="hero-badge" data-en="🚀 Now in early access" data-fr="🚀 Accès anticipé disponible">🚀 Now in early access</div>
+    <h1><span data-en="Build AI prompts that" data-fr="Créez des prompts IA qui">Build AI prompts that</span><br><span data-en="actually " data-fr="donnent vraiment des ">actually </span><span class="grad" data-en="get results" data-fr="résultats">get results</span></h1>
+    <p class="hero-sub" data-en="LoopCraft turns your project idea into a structured, ready-to-paste AI prompt in under 5 minutes. No prompt engineering degree required." data-fr="LoopCraft transforme votre idée de projet en un prompt IA structuré et prêt à l'emploi en moins de 5 minutes. Aucune expertise en prompt engineering requise.">LoopCraft turns your project idea into a structured, ready-to-paste AI prompt in under 5 minutes. No prompt engineering degree required.</p>
+    <div class="hero-ctas">
+      <button class="btn btn-primary btn-xl" onclick="openModal()" data-en="Start for free — no credit card" data-fr="Commencer gratuitement — sans carte">Start for free — no credit card</button>
+      <a href="#how" class="btn btn-ghost btn-lg" data-en="See how it works" data-fr="Voir comment ça marche">See how it works</a>
     </div>
-    <p class="receipt-why" id="whyLine"></p>
-
-    <div class="prompt-box">
-      <div class="prompt-head">
-        <span class="prompt-head-title" data-en="Your prompt — paste it at the start of any AI chat" data-fr="Votre prompt — collez-le au début de n'importe quel chat IA">Your prompt — paste it at the start of any AI chat</span>
-        <div class="prompt-actions">
-          <button class="btn btn-ghost" onclick="copyPrompt()" data-en="Copy" data-fr="Copier">Copy</button>
-          <button class="btn btn-ghost" onclick="openInClaude()" data-en="Open in Claude" data-fr="Ouvrir dans Claude">Open in Claude</button>
+    <p class="hero-social"><span data-en="Join " data-fr="Rejoignez ">Join </span><strong>2,400+</strong><span data-en=" consultants, developers, and teams already using LoopCraft" data-fr=" consultants, développeurs et équipes qui utilisent déjà LoopCraft"> consultants, developers, and teams already using LoopCraft</span></p>
+    <div class="mockup-wrap">
+      <div class="mockup-browser">
+        <div class="mockup-bar">
+          <div class="mockup-dot" style="background:#ff5f57"></div>
+          <div class="mockup-dot" style="background:#febc2e"></div>
+          <div class="mockup-dot" style="background:#28c840"></div>
+          <div class="mockup-url">app.loopcraft.io/builder</div>
+        </div>
+        <div class="mockup-body">
+          <div class="mockup-sidebar">
+            <div class="mockup-step"><div class="m-circle done">✓</div><span class="m-label">Project Setup</span></div>
+            <div class="mockup-step active-step"><div class="m-circle">2</div><span class="m-label">Tell the AI</span></div>
+            <div class="mockup-step"><div class="m-circle" style="background:var(--border);color:var(--muted)">3</div><span class="m-label">Memory</span></div>
+            <div class="mockup-step"><div class="m-circle" style="background:var(--border);color:var(--muted)">4</div><span class="m-label">Your Prompt</span></div>
+            <div class="mockup-step"><div class="m-circle" style="background:var(--border);color:var(--muted)">5</div><span class="m-label">Reference</span></div>
+          </div>
+          <div class="mockup-main">
+            <div class="m-q">
+              <div class="m-q-text">What do you want the AI to build or do?</div>
+              <div class="m-q-hint">Say it in one sentence, like you'd explain it to a friend.</div>
+              <div class="m-input">Build me a dashboard that shows monthly sales by region ✓</div>
+            </div>
+            <div class="m-q">
+              <div class="m-q-text">What kind of expert should the AI act like?</div>
+              <div class="m-tiles">
+                <div class="m-tile sel">💻 Developer</div>
+                <div class="m-tile">📊 Data Analyst</div>
+                <div class="m-tile">🤖 AI Engineer</div>
+                <div class="m-tile">📋 Business Analyst</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <pre id="promptOut"></pre>
     </div>
+  </div>
+</section>
 
-    <!-- ── ADVANCED ── -->
-    <details class="advanced" id="advPanel">
-      <summary data-en="Advanced — edit the details" data-fr="Avancé — modifier les détails">Advanced — edit the details</summary>
-      <div class="adv-grid">
-        <div class="adv-field">
-          <label for="projectName" data-en="Project name" data-fr="Nom du projet">Project name</label>
-          <input id="projectName" oninput="rebuild()">
-        </div>
-        <div class="adv-field">
-          <label for="loopType" data-en="Loop pattern" data-fr="Modèle de boucle">Loop pattern</label>
-          <select id="loopType" onchange="rebuild()">
-            <option value="core">Core Loop — one goal, one deliverable</option>
-            <option value="fleet">Fleet Loop — multiple workstreams</option>
-          </select>
-        </div>
-        <div class="adv-field">
-          <label for="role" data-en="AI acts as" data-fr="L'IA agit comme">AI acts as</label>
-          <select id="role" onchange="rebuild()">
-            <option value="Developer">Developer — writes &amp; fixes code</option>
-            <option value="Data Analyst">Data Analyst — data &amp; SQL</option>
-            <option value="AI Engineer">AI Engineer — automations</option>
-            <option value="Business Analyst">Business Analyst — plans &amp; documents</option>
-            <option value="Cloud / DevOps Engineer">Cloud / DevOps — deploys &amp; configures</option>
-            <option value="UX Designer">UX Designer — interfaces</option>
-          </select>
-        </div>
-        <div class="adv-field">
-          <label for="format" data-en="Output format" data-fr="Format de sortie">Output format</label>
-          <select id="format" onchange="rebuild()">
-            <option value="Working code">Code — ready to run</option>
-            <option value="Step-by-step action plan">Action plan — steps to follow</option>
-            <option value="Written report">Report — shareable document</option>
-            <option value="SQL queries">SQL — database queries</option>
-            <option value="Data analysis">Analysis — data insights</option>
-            <option value="Email / proposal draft">Email / Proposal — ready to send</option>
-          </select>
-        </div>
-        <div class="adv-field full">
-          <label for="goal" data-en="Goal — what should the AI build or do?" data-fr="Objectif — que doit faire ou construire l'IA ?">Goal — what should the AI build or do?</label>
-          <textarea id="goal" oninput="rebuild()"></textarea>
-        </div>
-        <div class="adv-field full">
-          <label for="doneWhen" data-en="Done when — how will you know it's finished?" data-fr="Terminé quand — comment saurez-vous que c'est fini ?">Done when — how will you know it's finished?</label>
-          <textarea id="doneWhen" oninput="rebuild()"></textarea>
-        </div>
-        <div class="adv-field full">
-          <label for="outOfScope" data-en="Out of scope — what should the AI NOT do?" data-fr="Hors périmètre — que ne doit PAS faire l'IA ?">Out of scope — what should the AI NOT do?</label>
-          <textarea id="outOfScope" oninput="rebuild()"></textarea>
-        </div>
-        <div class="adv-divider" data-en="Memory snapshot — for continuing past work" data-fr="Snapshot mémoire — pour continuer un travail passé">Memory snapshot — for continuing past work</div>
-        <div class="adv-field full">
-          <label for="memStatus" data-en="📍 Where are we right now?" data-fr="📍 Où en sommes-nous ?">📍 Where are we right now?</label>
-          <textarea id="memStatus" oninput="rebuild()"></textarea>
-        </div>
-        <div class="adv-field">
-          <label for="memLast" data-en="✅ Finished last time" data-fr="✅ Terminé la dernière fois">✅ Finished last time</label>
-          <textarea id="memLast" oninput="rebuild()"></textarea>
-        </div>
-        <div class="adv-field">
-          <label for="memDecisions" data-en="🔒 Locked decisions" data-fr="🔒 Décisions verrouillées">🔒 Locked decisions</label>
-          <textarea id="memDecisions" oninput="rebuild()"></textarea>
-        </div>
-        <div class="adv-field full">
-          <label for="memNext" data-en="➡️ Next task" data-fr="➡️ Prochaine tâche">➡️ Next task</label>
-          <textarea id="memNext" oninput="rebuild()"></textarea>
-        </div>
+<!-- LOGOS -->
+<div class="logos">
+  <p class="logos-label" data-en="Used by professionals at" data-fr="Utilisé par des professionnels de">Used by professionals at</p>
+  <div class="logos-row">
+    <span class="logo-pill">JPMorgan Chase</span>
+    <span class="logo-pill">Deloitte</span>
+    <span class="logo-pill">Nationwide</span>
+    <span class="logo-pill">Lumen Technologies</span>
+    <span class="logo-pill">Independent Consultants</span>
+    <span class="logo-pill">Startups</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="section-label" data-en="How it works" data-fr="Comment ça marche">How it works</div>
+    <h2 class="section-title" data-en="From one sentence<br>to a perfect prompt" data-fr="D'une seule phrase<br>à un prompt parfait">From one sentence<br>to a perfect prompt</h2>
+    <p class="section-sub" data-en="No forms. No jargon. Describe your work like you'd text a colleague — LoopCraft does the thinking." data-fr="Pas de formulaires. Pas de jargon. Décrivez votre travail comme un message à un collègue — LoopCraft fait le reste.">No forms. No jargon. Describe your work like you'd text a colleague — LoopCraft does the thinking.</p>
+    <div class="steps-grid">
+      <div class="step-card"><div class="step-num-big">01</div><h3 data-en="Describe what you're working on" data-fr="Décrivez votre projet">Describe what you're working on</h3><p data-en="One or two plain sentences in the box. Mention past work and LoopCraft builds your memory snapshot too. Takes 20 seconds." data-fr="Une ou deux phrases simples dans la case. Mentionnez le travail passé et LoopCraft construit aussi votre snapshot mémoire. Prend 20 secondes.">One or two plain sentences in the box. Mention past work and LoopCraft builds your memory snapshot too. Takes 20 seconds.</p></div>
+      <div class="step-card"><div class="step-num-big">02</div><h3 data-en="LoopCraft decides the setup" data-fr="LoopCraft décide la configuration">LoopCraft decides the setup</h3><p data-en="It picks the loop pattern, expert role, and output format for you — then shows its decisions as tappable chips with a one-line reason. Disagree? Change any chip." data-fr="Il choisit le modèle de boucle, le rôle d'expert et le format de sortie pour vous — puis affiche ses décisions sous forme de puces modifiables avec une explication. Pas d'accord ? Changez n'importe quelle puce.">It picks the loop pattern, expert role, and output format for you — then shows its decisions as tappable chips with a one-line reason. Disagree? Change any chip.</p></div>
+      <div class="step-card"><div class="step-num-big">03</div><h3 data-en="Get your prompt — paste and go" data-fr="Obtenez votre prompt — copiez et utilisez">Get your prompt — paste and go</h3><p data-en="Your structured, professional AI prompt is generated instantly. Copy it, paste it into Claude, ChatGPT, or any AI tool, and watch it work." data-fr="Votre prompt IA structuré et professionnel est généré instantanément. Copiez-le, collez-le dans Claude, ChatGPT ou tout autre outil IA, et regardez-le fonctionner.">Your structured, professional AI prompt is generated instantly. Copy it, paste it into Claude, ChatGPT, or any AI tool, and watch it work.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LOOP EXPLAINER -->
+<section style="padding-top:0">
+  <div class="container">
+    <div class="section-label" data-en="The Loop System" data-fr="Le Système de Boucle">The Loop System</div>
+    <h2 class="section-title" data-en="Two patterns. Every project covered." data-fr="Deux patterns. Tous vos projets couverts.">Two patterns. Every project covered.</h2>
+    <p class="section-sub" data-en="LoopCraft is built on a proven methodology used by top AI engineers and consultants worldwide." data-fr="LoopCraft est construit sur une méthodologie éprouvée utilisée par les meilleurs ingénieurs IA et consultants dans le monde.">LoopCraft is built on a proven methodology used by top AI engineers and consultants worldwide.</p>
+    <div class="loop-grid">
+      <div class="loop-card core"><div class="loop-icon">🔄</div><h3 data-en="Core Loop" data-fr="Boucle Principale">Core Loop</h3><p data-en="One AI agent handles your full task from start to finish — discover, plan, execute, verify. Perfect for focused, single-deliverable work." data-fr="Un seul agent IA gère toute votre tâche du début à la fin — découverte, planification, exécution, vérification. Parfait pour les travaux ciblés avec un seul livrable.">One AI agent handles your full task from start to finish — discover, plan, execute, verify. Perfect for focused, single-deliverable work.</p><span class="loop-tag core">SQL reports · Login pages · Email drafts · Scripts</span></div>
+      <div class="loop-card fleet"><div class="loop-icon">🚀</div><h3 data-en="Fleet Loop" data-fr="Boucle Flotte">Fleet Loop</h3><p data-en="An Orchestrator agent manages multiple Specialists running in parallel. Built for complex, multi-workstream projects that need coordinated expertise." data-fr="Un agent Orchestrateur gère plusieurs Spécialistes travaillant en parallèle. Conçu pour les projets complexes à plusieurs flux nécessitant une expertise coordonnée.">An Orchestrator agent manages multiple Specialists running in parallel. Built for complex, multi-workstream projects that need coordinated expertise.</p><span class="loop-tag fleet">Full platforms · Multi-module systems · Data pipelines</span></div>
+    </div>
+    <p style="text-align:center;font-size:14px;color:var(--muted)" data-en="You never have to choose — LoopCraft reads your description, picks the right pattern, and tells you why. Override it with one tap." data-fr="Vous n'avez jamais à choisir — LoopCraft lit votre description, choisit le bon modèle et vous explique pourquoi. Modifiable en un geste.">You never have to choose — LoopCraft reads your description, picks the right pattern, and tells you why. Override it with one tap.</p>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="features-bg">
+  <div class="container">
+    <div class="section-label" data-en="Features" data-fr="Fonctionnalités">Features</div>
+    <h2 class="section-title" data-en="Everything you need.<br>Nothing you don't." data-fr="Tout ce dont vous avez besoin.<br>Rien de superflu.">Everything you need.<br>Nothing you don't.</h2>
+    <p class="section-sub" data-en="Built for real-world AI work — not just another prompt template." data-fr="Conçu pour le travail IA réel — pas juste un autre modèle de prompt.">Built for real-world AI work — not just another prompt template.</p>
+    <div class="features-grid">
+      <div class="feat-card"><div class="feat-icon fi-p">⚡</div><h3 data-en="Decision receipt" data-fr="Reçu de décision">Decision receipt</h3><p data-en="LoopCraft shows exactly what it chose — loop, role, format — and why. Tap any chip to override it. Transparent AI, not a black box." data-fr="LoopCraft montre exactement ce qu'il a choisi — boucle, rôle, format — et pourquoi. Touchez une puce pour la modifier. Une IA transparente, pas une boîte noire.">LoopCraft shows exactly what it chose — loop, role, format — and why. Tap any chip to override it. Transparent AI, not a black box.</p></div>
+      <div class="feat-card"><div class="feat-icon fi-g">🧠</div><h3 data-en="Memory Snapshot" data-fr="Instantané Mémoire">Memory Snapshot</h3><p data-en="AI forgets everything when you close the chat. LoopCraft's Memory Snapshot carries your context across sessions automatically." data-fr="L'IA oublie tout quand vous fermez le chat. L'Instantané Mémoire de LoopCraft transporte votre contexte d'une session à l'autre automatiquement.">AI forgets everything when you close the chat. LoopCraft's Memory Snapshot carries your context across sessions automatically.</p></div>
+      <div class="feat-card"><div class="feat-icon fi-y">🌐</div><h3>French & English</h3><p>Full FR/EN toggle. Every label, hint, and generated prompt switches language instantly — built for international teams.</p></div>
+      <div class="feat-card"><div class="feat-icon fi-b">🛠</div><h3 data-en="Advanced editing" data-fr="Édition avancée">Advanced editing</h3><p data-en="Want full control? Open the Advanced panel to fine-tune every field — goal, scope, memory, format. The prompt regenerates live as you type." data-fr="Envie de tout contrôler ? Ouvrez le panneau Avancé pour ajuster chaque champ — objectif, périmètre, mémoire, format. Le prompt se régénère en direct pendant que vous tapez.">Want full control? Open the Advanced panel to fine-tune every field — goal, scope, memory, format. The prompt regenerates live as you type.</p></div>
+      <div class="feat-card"><div class="feat-icon fi-pk">📋</div><h3 data-en="Prompt history" data-fr="Historique des prompts">Prompt history</h3><p data-en="Your last 5 prompts are always one click away. Reload, compare, or reuse any past prompt instantly." data-fr="Vos 5 derniers prompts sont toujours à un clic. Rechargez, comparez ou réutilisez n'importe quel prompt passé instantanément.">Your last 5 prompts are always one click away. Reload, compare, or reuse any past prompt instantly.</p></div>
+      <div class="feat-card"><div class="feat-icon fi-o">🤖</div><h3 data-en="Open in Claude" data-fr="Ouvrir dans Claude">Open in Claude</h3><p data-en="One button sends your prompt directly to a new Claude chat — pre-filled and ready to run. Zero copy-pasting." data-fr="Un bouton envoie votre prompt directement dans un nouveau chat Claude — pré-rempli et prêt à fonctionner. Zéro copier-coller.">One button sends your prompt directly to a new Claude chat — pre-filled and ready to run. Zero copy-pasting.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+    <div class="section-label" data-en="Pricing" data-fr="Tarifs">Pricing</div>
+    <h2 class="section-title" data-en="Start free. Upgrade when you're ready." data-fr="Commencez gratuitement. Passez à Pro quand vous êtes prêt.">Start free. Upgrade when you're ready.</h2>
+    <p class="section-sub" data-en="No credit card required to get started. Cancel anytime." data-fr="Aucune carte de crédit requise pour commencer. Annulez à tout moment.">No credit card required to get started. Cancel anytime.</p>
+    <div class="pricing-grid" style="grid-template-columns:repeat(2,1fr);max-width:720px;margin:0 auto">
+      <div class="price-card">
+        <div class="price-name" data-en="Free" data-fr="Gratuit">Free</div>
+        <div class="price-amount">$0</div>
+        <div class="price-per" data-en="forever — no credit card needed" data-fr="pour toujours — sans carte de crédit">forever — no credit card needed</div>
+        <div class="price-divider"></div>
+        <ul class="pf">
+          <li>Core Loop prompts</li>
+          <li>3 saved prompts</li>
+          <li>English only</li>
+          <li>Smart instant engine</li>
+          <li>Decision receipt</li>
+          <li class="off">Fleet Loop</li>
+          <li class="off">FR/EN toggle</li>
+          <li class="off">Live AI engine</li>
+          <li class="off">Prompt history</li>
+        </ul>
+        <button class="price-cta pc-o" onclick="openModal()" data-en="Get started free" data-fr="Commencer gratuitement">Get started free</button>
       </div>
-    </details>
+      <div class="price-card featured">
+        <div class="price-badge">MOST POPULAR</div>
+        <div class="price-name">Pro</div>
+        <div class="price-amount">$9<span>/mo</span></div>
+        <div class="price-per" data-en="billed monthly · cancel anytime" data-fr="facturé mensuellement · annulez à tout moment">billed monthly · cancel anytime</div>
+        <div class="price-divider"></div>
+        <ul class="pf">
+          <li>Everything in Free</li>
+          <li>Fleet Loop (Orchestrator + Specialists)</li>
+          <li>Unlimited saved prompts</li>
+          <li>French & English toggle</li>
+          <li>Live AI engine (Claude-powered)</li>
+          <li>Full prompt history</li>
+          <li>Open in Claude shortcut</li>
+          <li>PDF export</li>
+          <li>Priority support</li>
+        </ul>
+        <button class="price-cta pc-p" onclick="openModal()" data-en="Start Pro free for 14 days" data-fr="Essayer Pro gratuitement 14 jours">Start Pro free for 14 days</button>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:13px;color:var(--muted);margin-top:24px"><span data-en="🏢 Need team or enterprise access? " data-fr="🏢 Besoin d'un accès équipe ou entreprise? ">🏢 Need team or enterprise access? </span><a href="mailto:hello@loopcraft.io" style="color:var(--accent)" data-en="Email us" data-fr="Contactez-nous">Email us</a></p>
+  </div>
+</section>
 
-    <!-- ── HISTORY ── -->
-    <details class="history">
-      <summary data-en="Recent prompts" data-fr="Prompts récents">Recent prompts</summary>
-      <div class="history-list" id="historyList"></div>
-      <p class="history-empty" id="historyEmpty" data-en="Nothing saved yet — prompts save automatically when you generate." data-fr="Rien d'enregistré — les prompts s'enregistrent automatiquement à la génération.">Nothing saved yet — prompts save automatically when you generate.</p>
-    </details>
-  </section>
-</main>
+<!-- TESTIMONIALS -->
+<section class="testi-bg">
+  <div class="container">
+    <div class="section-label" data-en="What people say" data-fr="Ce que disent les utilisateurs">What people say</div>
+    <h2 class="section-title" data-en="Real results from real users" data-fr="De vrais résultats pour de vrais utilisateurs">Real results from real users</h2>
+    <p class="section-sub" data-en="From solo consultants to enterprise teams." data-fr="Des consultants indépendants aux équipes d'entreprise.">From solo consultants to enterprise teams.</p>
+    <div class="testi-grid">
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"I used to spend 20 minutes crafting the perfect prompt before every AI session. LoopCraft cuts that to 2 minutes and the output is way more structured."</p><div class="testi-author"><div class="testi-av" style="background:var(--accent)">M</div><div><div class="testi-name">Marcus T.</div><div class="testi-role">Freelance Developer · Columbus, OH</div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"The Memory Snapshot feature alone is worth it. My AI sessions finally feel continuous instead of starting from scratch every single time."</p><div class="testi-author"><div class="testi-av" style="background:var(--accent2)">S</div><div><div class="testi-name">Sophie R.</div><div class="testi-role">Business Analyst · Montreal</div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"We rolled this out to our whole team. The FR/EN toggle was a dealbreaker for us — half our team works in French. Absolute game changer."</p><div class="testi-author"><div class="testi-av" style="background:var(--warn)">J</div><div><div class="testi-name">Jean-Paul M.</div><div class="testi-role">CTO · Toronto</div></div></div></div>
+    </div>
+  </div>
+</section>
 
-<div id="toast" role="status"></div>
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="section-label" data-en="FAQ" data-fr="Questions fréquentes">FAQ</div>
+    <h2 class="section-title" data-en="Common questions" data-fr="Questions courantes">Common questions</h2>
+    <div class="faq-list">
+      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="Do I need to know anything about AI to use this?" data-fr="Dois-je connaître l'IA pour utiliser ceci?">Do I need to know anything about AI to use this?</span><span class="faq-icon">+</span></div><div class="faq-a">No. LoopCraft is designed for anyone — from non-technical business owners to senior engineers. Every term is explained in plain language, and the tool guides you through each decision with examples and hints.</div></div>
+      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="Which AI tools does this work with?" data-fr="Avec quels outils IA cela fonctionne-t-il?">Which AI tools does this work with?</span><span class="faq-icon">+</span></div><div class="faq-a">LoopCraft generates plain-text prompts that work with any AI — Claude, ChatGPT, Gemini, Mistral, or any other. The "Open in Claude" shortcut is a convenience feature, but the prompt itself is universal.</div></div>
+      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="What's the difference between Core Loop and Fleet Loop?" data-fr="Quelle est la différence entre Boucle Principale et Boucle Flotte?">What's the difference between Core Loop and Fleet Loop?</span><span class="faq-icon">+</span></div><div class="faq-a">Core Loop is for focused, single-deliverable tasks handled by one AI agent. Fleet Loop is for complex projects where an Orchestrator delegates work to multiple Specialist agents running in parallel. You don't have to choose — LoopCraft picks the right one from your description and lets you override it with one tap.</div></div>
+      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="Can I try Pro before paying?" data-fr="Puis-je essayer Pro avant de payer?">Can I try Pro before paying?</span><span class="faq-icon">+</span></div><div class="faq-a">Yes — Pro comes with a 14-day free trial. No credit card required to start. You'll only be charged if you decide to continue after the trial.</div></div>
+      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="Is there a white-label option for agencies?" data-fr="Existe-t-il une option marque blanche pour les agences?">Is there a white-label option for agencies?</span><span class="faq-icon">+</span></div><div class="faq-a">Yes — white-label is included in the Team plan. You can brand the tool with your agency logo and colors and share it directly with clients.</div></div>
+      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="Who built this?" data-fr="Qui a créé ceci?">Who built this?</span><span class="faq-icon">+</span></div><div class="faq-a">LoopCraft is built by Prince Tech LLC, a technology consulting firm based in Columbus, Ohio. We build AI workflows, internal tools, and data integrations for businesses. This tool came directly from our own day-to-day client work.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <h2 data-en="Ready to build better AI prompts?" data-fr="Prêt(e) à créer de meilleurs prompts IA?">Ready to build better AI prompts?</h2>
+  <p data-en="Join 2,400+ professionals who spend less time prompting and more time shipping." data-fr="Rejoignez 2 400+ professionnels qui passent moins de temps à rédiger des prompts et plus de temps à livrer.">Join 2,400+ professionals who spend less time prompting and more time shipping.</p>
+  <button class="btn btn-white btn-xl" onclick="openModal()" data-en="Get started free — takes 2 minutes" data-fr="Commencer gratuitement — prend 2 minutes">Get started free — takes 2 minutes</button>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-brand-logo"><div class="logo-icon">🔄</div><span>LoopCraft</span></div>
+        <p data-en="Build structured AI prompts that actually work. Built for consultants, developers, and teams who need real results from AI." data-fr="Créez des prompts IA structurés qui fonctionnent vraiment. Conçu pour les consultants, développeurs et équipes qui ont besoin de vrais résultats avec l'IA.">Build structured AI prompts that actually work. Built for consultants, developers, and teams who need real results from AI.</p>
+      </div>
+      <div class="footer-col"><h4 data-en="Product" data-fr="Produit">Product</h4><a href="#how" data-en="How it works" data-fr="Comment ça marche">How it works</a><a href="#features" data-en="Features" data-fr="Fonctionnalités">Features</a><a href="#pricing" data-en="Pricing" data-fr="Tarifs">Pricing</a><a href="#">Changelog</a></div>
+      <div class="footer-col"><h4 data-en="Company" data-fr="Société">Company</h4><a href="#">About</a><a href="#">Blog</a><a href="mailto:hello@loopcraft.io">Contact</a></div>
+      <div class="footer-col"><h4 data-en="Legal" data-fr="Légal">Legal</h4><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span data-en="© 2026 LoopCraft. All rights reserved." data-fr="© 2026 LoopCraft. Tous droits réservés.">© 2026 LoopCraft. All rights reserved.</span>
+      <span>Built by <a href="https://princetechllc.com" target="_blank">Prince Tech LLC</a> · Columbus, Ohio</span>
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="mform">
+      <h2 data-en="🚀 Get early access" data-fr="🚀 Accès anticipé">🚀 Get early access</h2>
+      <p data-en="LoopCraft is in early access. Drop your email and we'll send you in — plus a free 30-day Pro trial." data-fr="LoopCraft est en accès anticipé. Laissez votre email et nous vous enverrons un accès — plus un essai Pro gratuit de 30 jours.">LoopCraft is in early access. Drop your email and we'll send you in — plus a free 30-day Pro trial.</p>
+      <input class="modal-input" type="email" id="memail" placeholder="your@email.com">
+      <input class="modal-input" type="text" id="mname" placeholder="Your name (optional)">
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;font-size:15px" onclick="submitModal()" data-en="Join the waitlist →" data-fr="Rejoindre la liste d'attente →">Join the waitlist →</button>
+      <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:12px" data-en="No spam. Unsubscribe anytime." data-fr="Pas de spam. Désabonnez-vous à tout moment.">No spam. Unsubscribe anytime.</p>
+    </div>
+    <div class="modal-success" id="msuccess">
+      <div class="big">🎉</div>
+      <h3 data-en="You're on the list!" data-fr="Vous êtes sur la liste!">You're on the list!</h3>
+      <p data-en="We'll email you within 24 hours with your early access link and free 30-day Pro trial." data-fr="Nous vous enverrons un email dans les 24 heures avec votre lien d'accès et votre essai Pro gratuit de 30 jours.">We'll email you within 24 hours with your early access link and free 30-day Pro trial.</p>
+    </div>
+  </div>
+</div>
 
 <script>
-/* ═══════════════════════════════════════════════
-   LoopCraft v2 — one box, one button
-   Tries /api/generate (live AI) → falls back to
-   the built-in local inference engine.
-   ═══════════════════════════════════════════════ */
+// ── THEME ───────────────────────────────────
+let theme='dark';
+function toggleTheme(){
+  theme=theme==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',theme);
+  document.getElementById('themeBtn').textContent=theme==='dark'?'☀️ Light':'🌙 Dark';
+}
 
-var LANG = 'en';
-var STR = {
-  en: {
-    whyCore: "Core Loop — this reads as one clear deliverable, so a single focused agent is faster and cheaper.",
-    whyFleet: "Fleet Loop — this mentions multiple workstreams, so the prompt sets up an orchestrator with specialists.",
-    whyRole: "Role and output were inferred from your wording.",
-    memYes: "Past work detected — a memory snapshot was added so the AI won't redo finished work.",
-    copied: "Copied to clipboard",
-    copyFail: "Couldn't copy — select the text manually",
-    aiOn: "Live AI engine connected",
-    aiOff: "Smart-template mode — instant and free. Live AI activates when the API is connected.",
-    building: "Building…",
-    build: "Build my prompt",
-    emptyBrief: "Describe what you're working on first — one sentence is enough.",
-    untitled: "Untitled project"
-  },
-  fr: {
-    whyCore: "Core Loop — cela ressemble à un livrable unique et clair, donc un seul agent concentré est plus rapide et moins coûteux.",
-    whyFleet: "Fleet Loop — cela mentionne plusieurs chantiers, donc le prompt configure un orchestrateur avec des spécialistes.",
-    whyRole: "Le rôle et la sortie ont été déduits de votre formulation.",
-    memYes: "Travail passé détecté — un snapshot mémoire a été ajouté pour que l'IA ne refasse pas le travail terminé.",
-    copied: "Copié dans le presse-papiers",
-    copyFail: "Copie impossible — sélectionnez le texte manuellement",
-    aiOn: "Moteur IA en direct connecté",
-    aiOff: "Mode template intelligent — instantané et gratuit. Le mode IA s'activera quand l'API sera connectée.",
-    building: "Création…",
-    build: "Créer mon prompt",
-    emptyBrief: "Décrivez d'abord votre projet — une phrase suffit.",
-    untitled: "Projet sans titre"
-  }
-};
-
-var STARTERS = {
-  en: [
-    "I need an internal dashboard that shows our monthly sales by region, pulling from a CSV export.",
-    "Continue my project from yesterday — I finished the login page, decisions locked: React + FastAPI. Next is the user profile page.",
-    "Automate a weekly Excel report: take the raw export, clean it, and summarize totals by department.",
-    "Plan a full client platform: member portal, payment page, admin dashboard, and email notifications."
-  ],
-  fr: [
-    "J'ai besoin d'un tableau de bord interne montrant les ventes mensuelles par région, à partir d'un export CSV.",
-    "Continuer mon projet d'hier — j'ai terminé la page de connexion, décisions verrouillées : React + FastAPI. La suite : la page de profil utilisateur.",
-    "Automatiser un rapport Excel hebdomadaire : prendre l'export brut, le nettoyer et résumer les totaux par département.",
-    "Planifier une plateforme client complète : portail membre, page de paiement, tableau de bord admin et notifications email."
-  ]
-};
-
-/* ── Language ── */
-function setLang(l) {
-  LANG = l;
-  document.getElementById('btn-en').classList.toggle('active', l === 'en');
-  document.getElementById('btn-fr').classList.toggle('active', l === 'fr');
-  document.documentElement.lang = l;
-  document.querySelectorAll('[data-en]').forEach(function(el) {
-    var v = el.getAttribute('data-' + l);
-    if (v !== null) el.innerHTML = v;
+// ── LANGUAGE ────────────────────────────────
+let lang='en';
+function setLang(l){
+  lang=l;
+  document.getElementById('btn-en').classList.toggle('active',l==='en');
+  document.getElementById('btn-fr').classList.toggle('active',l==='fr');
+  document.querySelectorAll('[data-en]').forEach(el=>{
+    const v=el.getAttribute('data-'+l);
+    if(v && el.tagName!=='INPUT' && el.tagName!=='BUTTON' || el.tagName==='BUTTON'){
+      // For buttons, update textContent
+      if(el.tagName==='BUTTON'||el.tagName==='A'){el.textContent=v;}
+      else{el.innerHTML=v;}
+    }
   });
-  var ta = document.getElementById('brief');
-  ta.placeholder = ta.getAttribute('data-placeholder-' + l) || ta.placeholder;
-  updateEngineNote();
-  try { localStorage.setItem('lc_lang', l); } catch (e) {}
+  // Update placeholders
+  const emailPh=document.getElementById('memail');
+  const namePh=document.getElementById('mname');
+  if(emailPh) emailPh.placeholder='your@email.com';
+  if(namePh) namePh.placeholder=l==='fr'?'Votre nom (optionnel)':'Your name (optional)';
+  // Update theme button
+  document.getElementById('themeBtn').textContent=theme==='dark'?(l==='fr'?'☀️ Clair':'☀️ Light'):(l==='fr'?'🌙 Sombre':'🌙 Dark');
 }
 
-function useStarter(i) {
-  document.getElementById('brief').value = STARTERS[LANG][i];
-  document.getElementById('brief').focus();
+// ── MODAL ───────────────────────────────────
+function openModal(){document.getElementById('modal').classList.add('open');document.body.style.overflow='hidden'}
+function closeModal(){document.getElementById('modal').classList.remove('open');document.body.style.overflow=''}
+function closeOutside(e){if(e.target===document.getElementById('modal'))closeModal()}
+function submitModal(){
+  const email=document.getElementById('memail').value;
+  if(!email.includes('@')){document.getElementById('memail').style.borderColor='#ef4444';return}
+  document.getElementById('mform').style.display='none';
+  document.getElementById('msuccess').style.display='block';
 }
 
-/* ── Local inference engine (fallback + instant mode) ── */
-function inferLocal(text) {
-  var t = text.toLowerCase();
-  var r = {};
+// ── FAQ ─────────────────────────────────────
+function toggleFaq(el){el.classList.toggle('open')}
 
-  // Loop type: fleet if multiple workstreams are implied
-  var fleetHits = 0;
-  ['platform', 'plateforme', 'full ', 'complète', 'complete ', ' portal', 'portail',
-   'frontend and backend', 'ui + api', 'multiple', 'plusieurs', 'several',
-   'and payment', 'et paiement', 'notifications', 'admin'].forEach(function(k) {
-    if (t.indexOf(k) !== -1) fleetHits++;
-  });
-  var commaChunks = text.split(/,| and | et /).length;
-  r.loop = (fleetHits >= 2 || commaChunks >= 4) ? 'fleet' : 'core';
-
-  // Role
-  var scores = {
-    'Developer': 0, 'Data Analyst': 0, 'AI Engineer': 0,
-    'Business Analyst': 0, 'Cloud / DevOps Engineer': 0, 'UX Designer': 0
-  };
-  var roleKeys = {
-    'Developer': ['code', 'script', 'app', 'api', 'bug', 'fix', 'build a', 'python', 'javascript', 'react', 'page', 'fonction', 'application', 'site'],
-    'Data Analyst': ['sql', 'data', 'données', 'report', 'rapport', 'excel', 'csv', 'analyz', 'analys', 'dashboard', 'tableau de bord', 'metrics', 'kpi'],
-    'AI Engineer': ['automat', 'workflow', ' ai ', "l'ia", 'prompt', 'agent', 'llm', 'claude', 'gpt'],
-    'Business Analyst': ['plan', 'requirement', 'exigence', 'document', 'proposal', 'proposition', 'process', 'processus', 'stakeholder'],
-    'Cloud / DevOps Engineer': ['deploy', 'déploi', 'aws', 'terraform', 'vercel', 'docker', 'server', 'serveur', 'infra', 'ci/cd', 'pipeline'],
-    'UX Designer': ['design', 'mockup', 'maquette', ' ui ', 'ux', 'interface', 'wireframe', 'figma']
-  };
-  Object.keys(roleKeys).forEach(function(role) {
-    roleKeys[role].forEach(function(k) { if (t.indexOf(k) !== -1) scores[role]++; });
-  });
-  var best = 'Developer', bestScore = 0;
-  Object.keys(scores).forEach(function(role) {
-    if (scores[role] > bestScore) { best = role; bestScore = scores[role]; }
-  });
-  r.role = best;
-
-  // Format
-  r.format = 'Working code';
-  if (best === 'Data Analyst') r.format = 'Data analysis';
-  if (best === 'Business Analyst') r.format = 'Step-by-step action plan';
-  if (t.indexOf('sql') !== -1) r.format = 'SQL queries';
-  if (t.indexOf('report') !== -1 || t.indexOf('rapport') !== -1) r.format = 'Written report';
-  if (t.indexOf('email') !== -1 || t.indexOf('proposal') !== -1 || t.indexOf('proposition') !== -1) r.format = 'Email / proposal draft';
-  if (t.indexOf('plan ') === 0 || t.indexOf('planifier') !== -1) r.format = 'Step-by-step action plan';
-
-  // Memory detection
-  var memHits = ['yesterday', 'hier', 'last session', 'dernière session', 'last time', 'la dernière fois',
-    'already', 'déjà', 'finished', 'terminé', "j'ai fini", 'continue', 'continuer', 'locked', 'verrouill', 'decisions'];
-  r.hasMemory = memHits.some(function(k) { return t.indexOf(k) !== -1; });
-
-  if (r.hasMemory) {
-    var parts = text.split(/[.!]\s+|—|;/);
-    var done = [], next = [], locked = [];
-    parts.forEach(function(p) {
-      var pl = p.toLowerCase();
-      if (/next|suite|now i|maintenant|todo|à faire/.test(pl)) next.push(p.trim());
-      else if (/finish|terminé|fini|done|complet|already|déjà/.test(pl)) done.push(p.trim());
-      if (/locked|verrouill|decided|décidé|décisions|using /.test(pl)) locked.push(p.trim());
-    });
-    r.memLast = done.join('. ');
-    r.memNext = next.join('. ');
-    r.memDecisions = locked.join('. ');
-    r.memStatus = parts[0] ? parts[0].trim() : '';
-  }
-
-  // Goal = first sentence; project name = first few meaningful words
-  var firstSentence = text.split(/[.!?\n]/)[0].trim();
-  r.goal = firstSentence;
-  r.projectName = firstSentence.replace(/^(i need |i want |je veux |j'ai besoin d'|j'ai besoin de |build |create |créer |continue |continuer |automate |automatiser |plan |planifier )/i, '')
-    .split(/\s+/).slice(0, 5).join(' ');
-  r.projectName = r.projectName.charAt(0).toUpperCase() + r.projectName.slice(1);
-  r.doneWhen = '';
-  r.outOfScope = '';
-  return r;
-}
-
-/* ── Try live AI first, fall back to local ── */
-var AI_AVAILABLE = null; // unknown until first try
-
-async function inferSmart(text) {
-  try {
-    var res = await fetch('/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ brief: text, lang: LANG })
-    });
-    if (!res.ok) throw new Error('api unavailable');
-    var data = await res.json();
-    AI_AVAILABLE = true;
-    updateEngineNote();
-    return data; // expects same shape as inferLocal output
-  } catch (e) {
-    AI_AVAILABLE = false;
-    updateEngineNote();
-    return inferLocal(text);
-  }
-}
-
-function updateEngineNote() {
-  var n = document.getElementById('engineNote');
-  if (AI_AVAILABLE === true) {
-    n.innerHTML = '<span class="dot ai"></span>' + STR[LANG].aiOn;
-  } else if (AI_AVAILABLE === false) {
-    n.innerHTML = '<span class="dot local"></span>' + STR[LANG].aiOff;
-  } else {
-    n.innerHTML = '';
-  }
-}
-
-/* ── Build the final prompt text ── */
-function buildPrompt(d) {
-  var lines = [];
-  var loopLabel = d.loop === 'fleet' ? 'FLEET LOOP (orchestrator + specialists)' : 'CORE LOOP (single focused agent)';
-
-  lines.push('# PROJECT: ' + (d.projectName || STR[LANG].untitled));
-  lines.push('');
-  lines.push('## ROLE');
-  lines.push('Act as an experienced ' + d.role + '. Think step by step, state assumptions, and ask before making irreversible choices.');
-  lines.push('');
-  lines.push('## LOOP PATTERN — ' + loopLabel);
-  if (d.loop === 'fleet') {
-    lines.push('Operate as an orchestrator. Break this project into workstreams, assign each to a specialist perspective, and reconcile their outputs into one coherent deliverable. Surface conflicts between workstreams before resolving them.');
-  } else {
-    lines.push('Work as a single focused agent toward one deliverable. Plan first, then execute step by step. Do not expand scope.');
-  }
-  lines.push('');
-  lines.push('## GOAL');
-  lines.push(d.goal || '(describe the goal)');
-  if (d.doneWhen) {
-    lines.push('');
-    lines.push('## DONE WHEN');
-    lines.push(d.doneWhen);
-  }
-  if (d.outOfScope) {
-    lines.push('');
-    lines.push('## OUT OF SCOPE — do NOT do these');
-    lines.push(d.outOfScope);
-  }
-  lines.push('');
-  lines.push('## OUTPUT FORMAT');
-  lines.push(d.format + '. Keep the answer structured and directly usable.');
-
-  var hasMem = d.memStatus || d.memLast || d.memDecisions || d.memNext;
-  if (hasMem) {
-    lines.push('');
-    lines.push('## MEMORY SNAPSHOT — context from previous sessions');
-    if (d.memStatus)    lines.push('- Current state: ' + d.memStatus);
-    if (d.memLast)      lines.push('- Already finished (do not redo): ' + d.memLast);
-    if (d.memDecisions) lines.push('- Locked decisions (do not re-question): ' + d.memDecisions);
-    if (d.memNext)      lines.push('- Next task: ' + d.memNext);
-  }
-  lines.push('');
-  lines.push('## FIRST MOVE');
-  lines.push('Start by confirming your understanding of the goal in 2-3 bullets, then begin.');
-  return lines.join('\n');
-}
-
-/* ── Main generate flow ── */
-async function generate() {
-  var brief = document.getElementById('brief').value.trim();
-  if (!brief) { toast(STR[LANG].emptyBrief); return; }
-
-  var btn = document.getElementById('goBtn');
-  btn.disabled = true;
-  btn.textContent = STR[LANG].building;
-
-  var d = await inferSmart(brief);
-
-  // Fill advanced fields
-  document.getElementById('projectName').value = d.projectName || '';
-  document.getElementById('loopType').value = d.loop || 'core';
-  document.getElementById('role').value = d.role || 'Developer';
-  document.getElementById('format').value = d.format || 'Working code';
-  document.getElementById('goal').value = d.goal || '';
-  document.getElementById('doneWhen').value = d.doneWhen || '';
-  document.getElementById('outOfScope').value = d.outOfScope || '';
-  document.getElementById('memStatus').value = d.memStatus || '';
-  document.getElementById('memLast').value = d.memLast || '';
-  document.getElementById('memDecisions').value = d.memDecisions || '';
-  document.getElementById('memNext').value = d.memNext || '';
-
-  rebuild();
-
-  // Receipt why-line
-  var why = (d.loop === 'fleet' ? STR[LANG].whyFleet : STR[LANG].whyCore) + ' ' + STR[LANG].whyRole;
-  var memShown = d.hasMemory || d.memStatus || d.memLast;
-  if (memShown) why += ' ' + STR[LANG].memYes;
-  document.getElementById('whyLine').textContent = why;
-  document.getElementById('chipMemoryWrap').style.display = memShown ? '' : 'none';
-
-  document.getElementById('result').classList.add('visible');
-  saveToHistory(brief);
-
-  btn.disabled = false;
-  btn.textContent = STR[LANG].build;
-  document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-/* ── Rebuild prompt from advanced fields (edits regenerate live) ── */
-function rebuild() {
-  var d = {
-    projectName: document.getElementById('projectName').value,
-    loop: document.getElementById('loopType').value,
-    role: document.getElementById('role').value,
-    format: document.getElementById('format').value,
-    goal: document.getElementById('goal').value,
-    doneWhen: document.getElementById('doneWhen').value,
-    outOfScope: document.getElementById('outOfScope').value,
-    memStatus: document.getElementById('memStatus').value,
-    memLast: document.getElementById('memLast').value,
-    memDecisions: document.getElementById('memDecisions').value,
-    memNext: document.getElementById('memNext').value
-  };
-  document.getElementById('promptOut').textContent = buildPrompt(d);
-  // Sync chips
-  document.getElementById('chipLoop').textContent = d.loop === 'fleet' ? 'Fleet' : 'Core';
-  document.getElementById('chipRole').textContent = d.role;
-  var fmtShort = d.format.split(/[—-]/)[0].trim();
-  document.getElementById('chipFormat').textContent = fmtShort.length > 18 ? fmtShort.slice(0, 18) + '…' : fmtShort;
-}
-
-/* ── Chips open the advanced panel at the right field ── */
-function openAdvanced(fieldId) {
-  var panel = document.getElementById('advPanel');
-  panel.open = true;
-  var f = document.getElementById(fieldId);
-  if (f) { f.focus(); f.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-}
-
-/* ── Copy / Open ── */
-function copyPrompt() {
-  var text = document.getElementById('promptOut').textContent;
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(function() { toast(STR[LANG].copied); }, function() { toast(STR[LANG].copyFail); });
-  } else {
-    toast(STR[LANG].copyFail);
-  }
-}
-function openInClaude() {
-  var text = document.getElementById('promptOut').textContent;
-  window.open('https://claude.ai/new?q=' + encodeURIComponent(text), '_blank');
-}
-
-/* ── History (last 5 briefs, localStorage, fails silently) ── */
-function saveToHistory(brief) {
-  try {
-    var h = JSON.parse(localStorage.getItem('lc_history') || '[]');
-    h = h.filter(function(x) { return x !== brief; });
-    h.unshift(brief);
-    h = h.slice(0, 5);
-    localStorage.setItem('lc_history', JSON.stringify(h));
-    renderHistory();
-  } catch (e) {}
-}
-function renderHistory() {
-  try {
-    var h = JSON.parse(localStorage.getItem('lc_history') || '[]');
-    var list = document.getElementById('historyList');
-    var empty = document.getElementById('historyEmpty');
-    list.innerHTML = '';
-    empty.style.display = h.length ? 'none' : '';
-    h.forEach(function(brief) {
-      var b = document.createElement('button');
-      b.className = 'history-item';
-      b.textContent = brief;
-      b.onclick = function() {
-        document.getElementById('brief').value = brief;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        document.getElementById('brief').focus();
-      };
-      list.appendChild(b);
-    });
-  } catch (e) {}
-}
-
-/* ── Toast ── */
-var toastTimer;
-function toast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2400);
-}
-
-/* ── Init ── */
-(function() {
-  try {
-    var saved = localStorage.getItem('lc_lang');
-    if (saved === 'fr') setLang('fr');
-  } catch (e) {}
-  renderHistory();
-  // Ctrl/Cmd+Enter generates
-  document.getElementById('brief').addEventListener('keydown', function(e) {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') generate();
-  });
-})();
+// ── NAV SHADOW ──────────────────────────────
+window.addEventListener('scroll',()=>{
+  const nav=document.getElementById('navbar');
+  if(nav) nav.style.boxShadow=window.scrollY>20?'0 4px 24px rgba(0,0,0,.25)':'none';
+});
 </script>
 </body>
 </html>
