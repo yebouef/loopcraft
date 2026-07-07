@@ -169,298 +169,298 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40p
 .modal-success p{font-size:14px;color:var(--muted);line-height:1.6}
 /* MOBILE */
 @media(max-width:768px){
-  nav{padding:0 20px}.nav-links{display:none}
-  section{padding:64px 20px}
-  .steps-grid,.features-grid,.testi-grid,.pricing-grid,.loop-grid,.footer-grid{grid-template-columns:1fr}
-  .cta-banner{margin:0 20px 60px;padding:56px 24px}
-  .mockup-body{grid-template-columns:1fr}.mockup-sidebar{display:none}
+nav{padding:0 20px}.nav-links{display:none}
+section{padding:64px 20px}
+.steps-grid,.features-grid,.testi-grid,.pricing-grid,.loop-grid,.footer-grid{grid-template-columns:1fr}
+.cta-banner{margin:0 20px 60px;padding:56px 24px}
+.mockup-body{grid-template-columns:1fr}.mockup-sidebar{display:none}
 }
 </style>
 </head>
 <body>
 
 <nav id="navbar">
-  <div class="nav-logo"><div class="logo-icon">🔄</div>Loop<span>Craft</span></div>
-  <div class="nav-links">
-    <a href="#how" data-en="How it works" data-fr="Comment ça marche">How it works</a>
-    <a href="#features" data-en="Features" data-fr="Fonctionnalités">Features</a>
-    <a href="#pricing" data-en="Pricing" data-fr="Tarifs">Pricing</a>
-    <a href="#faq" data-en="FAQ" data-fr="FAQ">FAQ</a>
-  </div>
-  <div class="nav-right">
-    <div class="lang-toggle">
-      <button class="lang-btn active" onclick="setLang('en')" id="btn-en">EN</button>
-      <button class="lang-btn" onclick="setLang('fr')" id="btn-fr">FR</button>
-    </div>
-    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️ Light</button>
-    <button class="btn btn-ghost" style="padding:8px 18px" onclick="openModal()" data-en="Sign in" data-fr="Se connecter">Sign in</button>
-    <button class="btn btn-primary" onclick="openModal()" data-en="Get started free" data-fr="Commencer gratuitement">Get started free</button>
-  </div>
+<div class="nav-logo"><div class="logo-icon">🔄</div>Loop<span>Craft</span></div>
+<div class="nav-links">
+<a href="#how" data-en="How it works" data-fr="Comment ça marche">How it works</a>
+<a href="#features" data-en="Features" data-fr="Fonctionnalités">Features</a>
+<a href="#pricing" data-en="Pricing" data-fr="Tarifs">Pricing</a>
+<a href="#faq" data-en="FAQ" data-fr="FAQ">FAQ</a>
+</div>
+<div class="nav-right">
+<div class="lang-toggle">
+<button class="lang-btn active" onclick="setLang('en')" id="btn-en">EN</button>
+<button class="lang-btn" onclick="setLang('fr')" id="btn-fr">FR</button>
+</div>
+<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️ Light</button>
+<button class="btn btn-ghost" style="padding:8px 18px" onclick="openModal()" data-en="Sign in" data-fr="Se connecter">Sign in</button>
+<button class="btn btn-primary" onclick="location.href='tool.html'" data-en="Get started free" data-fr="Commencer gratuitement">Get started free</button>
+</div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-bg"><div class="hero-blob blob1"></div><div class="hero-blob blob2"></div></div>
-  <div class="container" style="position:relative;z-index:1">
-    <div class="hero-badge" data-en="🚀 Now in early access" data-fr="🚀 Accès anticipé disponible">🚀 Now in early access</div>
-    <h1><span data-en="Build AI prompts that" data-fr="Créez des prompts IA qui">Build AI prompts that</span><br><span data-en="actually " data-fr="donnent vraiment des ">actually </span><span class="grad" data-en="get results" data-fr="résultats">get results</span></h1>
-    <p class="hero-sub" data-en="LoopCraft turns your project idea into a structured, ready-to-paste AI prompt in under 5 minutes. No prompt engineering degree required." data-fr="LoopCraft transforme votre idée de projet en un prompt IA structuré et prêt à l'emploi en moins de 5 minutes. Aucune expertise en prompt engineering requise.">LoopCraft turns your project idea into a structured, ready-to-paste AI prompt in under 5 minutes. No prompt engineering degree required.</p>
-    <div class="hero-ctas">
-      <button class="btn btn-primary btn-xl" onclick="openModal()" data-en="Start for free — no credit card" data-fr="Commencer gratuitement — sans carte">Start for free — no credit card</button>
-      <a href="#how" class="btn btn-ghost btn-lg" data-en="See how it works" data-fr="Voir comment ça marche">See how it works</a>
-    </div>
-    <p class="hero-social"><span data-en="Join " data-fr="Rejoignez ">Join </span><strong>2,400+</strong><span data-en=" consultants, developers, and teams already using LoopCraft" data-fr=" consultants, développeurs et équipes qui utilisent déjà LoopCraft"> consultants, developers, and teams already using LoopCraft</span></p>
-    <div class="mockup-wrap">
-      <div class="mockup-browser">
-        <div class="mockup-bar">
-          <div class="mockup-dot" style="background:#ff5f57"></div>
-          <div class="mockup-dot" style="background:#febc2e"></div>
-          <div class="mockup-dot" style="background:#28c840"></div>
-          <div class="mockup-url">app.loopcraft.io/builder</div>
-        </div>
-        <div class="mockup-body">
-          <div class="mockup-sidebar">
-            <div class="mockup-step"><div class="m-circle done">✓</div><span class="m-label">Project Setup</span></div>
-            <div class="mockup-step active-step"><div class="m-circle">2</div><span class="m-label">Tell the AI</span></div>
-            <div class="mockup-step"><div class="m-circle" style="background:var(--border);color:var(--muted)">3</div><span class="m-label">Memory</span></div>
-            <div class="mockup-step"><div class="m-circle" style="background:var(--border);color:var(--muted)">4</div><span class="m-label">Your Prompt</span></div>
-            <div class="mockup-step"><div class="m-circle" style="background:var(--border);color:var(--muted)">5</div><span class="m-label">Reference</span></div>
-          </div>
-          <div class="mockup-main">
-            <div class="m-q">
-              <div class="m-q-text">What do you want the AI to build or do?</div>
-              <div class="m-q-hint">Say it in one sentence, like you'd explain it to a friend.</div>
-              <div class="m-input">Build me a dashboard that shows monthly sales by region ✓</div>
-            </div>
-            <div class="m-q">
-              <div class="m-q-text">What kind of expert should the AI act like?</div>
-              <div class="m-tiles">
-                <div class="m-tile sel">💻 Developer</div>
-                <div class="m-tile">📊 Data Analyst</div>
-                <div class="m-tile">🤖 AI Engineer</div>
-                <div class="m-tile">📋 Business Analyst</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="hero-bg"><div class="hero-blob blob1"></div><div class="hero-blob blob2"></div></div>
+<div class="container" style="position:relative;z-index:1">
+<div class="hero-badge" data-en="🚀 Now in early access" data-fr="🚀 Accès anticipé disponible">🚀 Now in early access</div>
+<h1><span data-en="Build AI prompts that" data-fr="Créez des prompts IA qui">Build AI prompts that</span><br><span data-en="actually " data-fr="donnent vraiment des ">actually </span><span class="grad" data-en="get results" data-fr="résultats">get results</span></h1>
+<p class="hero-sub" data-en="LoopCraft turns your project idea into a structured, ready-to-paste AI prompt in under 5 minutes. No prompt engineering degree required." data-fr="LoopCraft transforme votre idée de projet en un prompt IA structuré et prêt à l'emploi en moins de 5 minutes. Aucune expertise en prompt engineering requise.">LoopCraft turns your project idea into a structured, ready-to-paste AI prompt in under 5 minutes. No prompt engineering degree required.</p>
+<div class="hero-ctas">
+<button class="btn btn-primary btn-xl" onclick="location.href='tool.html'" data-en="Start for free — no credit card" data-fr="Commencer gratuitement — sans carte">Start for free — no credit card</button>
+<a href="#how" class="btn btn-ghost btn-lg" data-en="See how it works" data-fr="Voir comment ça marche">See how it works</a>
+</div>
+<p class="hero-social"><span data-en="Join " data-fr="Rejoignez ">Join </span><strong>2,400+</strong><span data-en=" consultants, developers, and teams already using LoopCraft" data-fr=" consultants, développeurs et équipes qui utilisent déjà LoopCraft"> consultants, developers, and teams already using LoopCraft</span></p>
+<div class="mockup-wrap">
+<div class="mockup-browser">
+<div class="mockup-bar">
+<div class="mockup-dot" style="background:#ff5f57"></div>
+<div class="mockup-dot" style="background:#febc2e"></div>
+<div class="mockup-dot" style="background:#28c840"></div>
+<div class="mockup-url">app.loopcraft.io/builder</div>
+</div>
+<div class="mockup-body">
+<div class="mockup-sidebar">
+<div class="mockup-step"><div class="m-circle done">✓</div><span class="m-label">Project Setup</span></div>
+<div class="mockup-step active-step"><div class="m-circle">2</div><span class="m-label">Tell the AI</span></div>
+<div class="mockup-step"><div class="m-circle" style="background:var(--border);color:var(--muted)">3</div><span class="m-label">Memory</span></div>
+<div class="mockup-step"><div class="m-circle" style="background:var(--border);color:var(--muted)">4</div><span class="m-label">Your Prompt</span></div>
+<div class="mockup-step"><div class="m-circle" style="background:var(--border);color:var(--muted)">5</div><span class="m-label">Reference</span></div>
+</div>
+<div class="mockup-main">
+<div class="m-q">
+<div class="m-q-text">What do you want the AI to build or do?</div>
+<div class="m-q-hint">Say it in one sentence, like you'd explain it to a friend.</div>
+<div class="m-input">Build me a dashboard that shows monthly sales by region ✓</div>
+</div>
+<div class="m-q">
+<div class="m-q-text">What kind of expert should the AI act like?</div>
+<div class="m-tiles">
+<div class="m-tile sel">💻 Developer</div>
+<div class="m-tile">📊 Data Analyst</div>
+<div class="m-tile">🤖 AI Engineer</div>
+<div class="m-tile">📋 Business Analyst</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </section>
 
 <!-- LOGOS -->
 <div class="logos">
-  <p class="logos-label" data-en="Used by professionals at" data-fr="Utilisé par des professionnels de">Used by professionals at</p>
-  <div class="logos-row">
-    <span class="logo-pill">JPMorgan Chase</span>
-    <span class="logo-pill">Deloitte</span>
-    <span class="logo-pill">Nationwide</span>
-    <span class="logo-pill">Lumen Technologies</span>
-    <span class="logo-pill">Independent Consultants</span>
-    <span class="logo-pill">Startups</span>
-  </div>
+<p class="logos-label" data-en="Used by professionals at" data-fr="Utilisé par des professionnels de">Used by professionals at</p>
+<div class="logos-row">
+<span class="logo-pill">JPMorgan Chase</span>
+<span class="logo-pill">Deloitte</span>
+<span class="logo-pill">Nationwide</span>
+<span class="logo-pill">Lumen Technologies</span>
+<span class="logo-pill">Independent Consultants</span>
+<span class="logo-pill">Startups</span>
+</div>
 </div>
 
 <!-- HOW IT WORKS -->
 <section id="how">
-  <div class="container">
-    <div class="section-label" data-en="How it works" data-fr="Comment ça marche">How it works</div>
-    <h2 class="section-title" data-en="From blank page to perfect prompt<br>in 5 steps" data-fr="De la page blanche au prompt parfait<br>en 5 étapes">From blank page to perfect prompt<br>in 5 steps</h2>
-    <p class="section-sub" data-en="No jargon. No guesswork. LoopCraft walks you through it one question at a time." data-fr="Pas de jargon. Pas de devinettes. LoopCraft vous guide question par question.">No jargon. No guesswork. LoopCraft walks you through it one question at a time.</p>
-    <div class="steps-grid">
-      <div class="step-card"><div class="step-num-big">01</div><h3 data-en="Set up your project" data-fr="Paramétrez votre projet">Set up your project</h3><p data-en="Name your project, pick the type, and choose your loop pattern. LoopCraft explains every option in plain language — no technical knowledge needed." data-fr="Nommez votre projet, choisissez le type et le type de boucle. LoopCraft explique chaque option en langage simple — aucune connaissance technique requise.">Name your project, pick the type, and choose your loop pattern. LoopCraft explains every option in plain language — no technical knowledge needed.</p></div>
-      <div class="step-card"><div class="step-num-big">02</div><h3 data-en="Answer 5 simple questions" data-fr="Répondez à 5 questions simples">Answer 5 simple questions</h3><p data-en="Tell us what you want built, how you'll know it's done, and what to avoid. Click tiles to pick your AI expert type and output format. Takes 2 minutes." data-fr="Dites-nous ce que vous voulez construire, comment vous saurez que c'est terminé, et ce qu'il faut éviter. Cliquez pour choisir le type d'expert IA et le format. Prend 2 minutes.">Tell us what you want built, how you'll know it's done, and what to avoid. Click tiles to pick your AI expert type and output format. Takes 2 minutes.</p></div>
-      <div class="step-card"><div class="step-num-big">03</div><h3 data-en="Get your prompt — paste and go" data-fr="Obtenez votre prompt — copiez et utilisez">Get your prompt — paste and go</h3><p data-en="Your structured, professional AI prompt is generated instantly. Copy it, paste it into Claude, ChatGPT, or any AI tool, and watch it work." data-fr="Votre prompt IA structuré et professionnel est généré instantanément. Copiez-le, collez-le dans Claude, ChatGPT ou tout autre outil IA, et regardez-le fonctionner.">Your structured, professional AI prompt is generated instantly. Copy it, paste it into Claude, ChatGPT, or any AI tool, and watch it work.</p></div>
-    </div>
-  </div>
+<div class="container">
+<div class="section-label" data-en="How it works" data-fr="Comment ça marche">How it works</div>
+<h2 class="section-title" data-en="From blank page to perfect prompt<br>in 5 steps" data-fr="De la page blanche au prompt parfait<br>en 5 étapes">From blank page to perfect prompt<br>in 5 steps</h2>
+<p class="section-sub" data-en="No jargon. No guesswork. LoopCraft walks you through it one question at a time." data-fr="Pas de jargon. Pas de devinettes. LoopCraft vous guide question par question.">No jargon. No guesswork. LoopCraft walks you through it one question at a time.</p>
+<div class="steps-grid">
+<div class="step-card"><div class="step-num-big">01</div><h3 data-en="Set up your project" data-fr="Paramétrez votre projet">Set up your project</h3><p data-en="Name your project, pick the type, and choose your loop pattern. LoopCraft explains every option in plain language — no technical knowledge needed." data-fr="Nommez votre projet, choisissez le type et le type de boucle. LoopCraft explique chaque option en langage simple — aucune connaissance technique requise.">Name your project, pick the type, and choose your loop pattern. LoopCraft explains every option in plain language — no technical knowledge needed.</p></div>
+<div class="step-card"><div class="step-num-big">02</div><h3 data-en="Answer 5 simple questions" data-fr="Répondez à 5 questions simples">Answer 5 simple questions</h3><p data-en="Tell us what you want built, how you'll know it's done, and what to avoid. Click tiles to pick your AI expert type and output format. Takes 2 minutes." data-fr="Dites-nous ce que vous voulez construire, comment vous saurez que c'est terminé, et ce qu'il faut éviter. Cliquez pour choisir le type d'expert IA et le format. Prend 2 minutes.">Tell us what you want built, how you'll know it's done, and what to avoid. Click tiles to pick your AI expert type and output format. Takes 2 minutes.</p></div>
+<div class="step-card"><div class="step-num-big">03</div><h3 data-en="Get your prompt — paste and go" data-fr="Obtenez votre prompt — copiez et utilisez">Get your prompt — paste and go</h3><p data-en="Your structured, professional AI prompt is generated instantly. Copy it, paste it into Claude, ChatGPT, or any AI tool, and watch it work." data-fr="Votre prompt IA structuré et professionnel est généré instantanément. Copiez-le, collez-le dans Claude, ChatGPT ou tout autre outil IA, et regardez-le fonctionner.">Your structured, professional AI prompt is generated instantly. Copy it, paste it into Claude, ChatGPT, or any AI tool, and watch it work.</p></div>
+</div>
+</div>
 </section>
 
 <!-- LOOP EXPLAINER -->
 <section style="padding-top:0">
-  <div class="container">
-    <div class="section-label" data-en="The Loop System" data-fr="Le Système de Boucle">The Loop System</div>
-    <h2 class="section-title" data-en="Two patterns. Every project covered." data-fr="Deux patterns. Tous vos projets couverts.">Two patterns. Every project covered.</h2>
-    <p class="section-sub" data-en="LoopCraft is built on a proven methodology used by top AI engineers and consultants worldwide." data-fr="LoopCraft est construit sur une méthodologie éprouvée utilisée par les meilleurs ingénieurs IA et consultants dans le monde.">LoopCraft is built on a proven methodology used by top AI engineers and consultants worldwide.</p>
-    <div class="loop-grid">
-      <div class="loop-card core"><div class="loop-icon">🔄</div><h3 data-en="Core Loop" data-fr="Boucle Principale">Core Loop</h3><p data-en="One AI agent handles your full task from start to finish — discover, plan, execute, verify. Perfect for focused, single-deliverable work." data-fr="Un seul agent IA gère toute votre tâche du début à la fin — découverte, planification, exécution, vérification. Parfait pour les travaux ciblés avec un seul livrable.">One AI agent handles your full task from start to finish — discover, plan, execute, verify. Perfect for focused, single-deliverable work.</p><span class="loop-tag core">SQL reports · Login pages · Email drafts · Scripts</span></div>
-      <div class="loop-card fleet"><div class="loop-icon">🚀</div><h3 data-en="Fleet Loop" data-fr="Boucle Flotte">Fleet Loop</h3><p data-en="An Orchestrator agent manages multiple Specialists running in parallel. Built for complex, multi-workstream projects that need coordinated expertise." data-fr="Un agent Orchestrateur gère plusieurs Spécialistes travaillant en parallèle. Conçu pour les projets complexes à plusieurs flux nécessitant une expertise coordonnée.">An Orchestrator agent manages multiple Specialists running in parallel. Built for complex, multi-workstream projects that need coordinated expertise.</p><span class="loop-tag fleet">Full platforms · Multi-module systems · Data pipelines</span></div>
-    </div>
-    <p style="text-align:center;font-size:14px;color:var(--muted)" data-en="Not sure which to use? LoopCraft's built-in quiz picks the right one for you in one question." data-fr="Pas sûr(e) lequel choisir? Le quiz intégré de LoopCraft choisit le bon en une seule question.">Not sure which to use? LoopCraft's built-in quiz picks the right one for you in one question.</p>
-  </div>
+<div class="container">
+<div class="section-label" data-en="The Loop System" data-fr="Le Système de Boucle">The Loop System</div>
+<h2 class="section-title" data-en="Two patterns. Every project covered." data-fr="Deux patterns. Tous vos projets couverts.">Two patterns. Every project covered.</h2>
+<p class="section-sub" data-en="LoopCraft is built on a proven methodology used by top AI engineers and consultants worldwide." data-fr="LoopCraft est construit sur une méthodologie éprouvée utilisée par les meilleurs ingénieurs IA et consultants dans le monde.">LoopCraft is built on a proven methodology used by top AI engineers and consultants worldwide.</p>
+<div class="loop-grid">
+<div class="loop-card core"><div class="loop-icon">🔄</div><h3 data-en="Core Loop" data-fr="Boucle Principale">Core Loop</h3><p data-en="One AI agent handles your full task from start to finish — discover, plan, execute, verify. Perfect for focused, single-deliverable work." data-fr="Un seul agent IA gère toute votre tâche du début à la fin — découverte, planification, exécution, vérification. Parfait pour les travaux ciblés avec un seul livrable.">One AI agent handles your full task from start to finish — discover, plan, execute, verify. Perfect for focused, single-deliverable work.</p><span class="loop-tag core">SQL reports · Login pages · Email drafts · Scripts</span></div>
+<div class="loop-card fleet"><div class="loop-icon">🚀</div><h3 data-en="Fleet Loop" data-fr="Boucle Flotte">Fleet Loop</h3><p data-en="An Orchestrator agent manages multiple Specialists running in parallel. Built for complex, multi-workstream projects that need coordinated expertise." data-fr="Un agent Orchestrateur gère plusieurs Spécialistes travaillant en parallèle. Conçu pour les projets complexes à plusieurs flux nécessitant une expertise coordonnée.">An Orchestrator agent manages multiple Specialists running in parallel. Built for complex, multi-workstream projects that need coordinated expertise.</p><span class="loop-tag fleet">Full platforms · Multi-module systems · Data pipelines</span></div>
+</div>
+<p style="text-align:center;font-size:14px;color:var(--muted)" data-en="Not sure which to use? LoopCraft's built-in quiz picks the right one for you in one question." data-fr="Pas sûr(e) lequel choisir? Le quiz intégré de LoopCraft choisit le bon en une seule question.">Not sure which to use? LoopCraft's built-in quiz picks the right one for you in one question.</p>
+</div>
 </section>
 
 <!-- FEATURES -->
 <section id="features" class="features-bg">
-  <div class="container">
-    <div class="section-label" data-en="Features" data-fr="Fonctionnalités">Features</div>
-    <h2 class="section-title" data-en="Everything you need.<br>Nothing you don't." data-fr="Tout ce dont vous avez besoin.<br>Rien de superflu.">Everything you need.<br>Nothing you don't.</h2>
-    <p class="section-sub" data-en="Built for real-world AI work — not just another prompt template." data-fr="Conçu pour le travail IA réel — pas juste un autre modèle de prompt.">Built for real-world AI work — not just another prompt template.</p>
-    <div class="features-grid">
-      <div class="feat-card"><div class="feat-icon fi-p">⚡</div><h3 data-en="Live prompt preview" data-fr="Aperçu en direct">Live prompt preview</h3><p data-en="See your prompt being built in real time as you fill in the form. No surprises at the end." data-fr="Voyez votre prompt se construire en temps réel pendant que vous remplissez le formulaire. Aucune surprise à la fin.">See your prompt being built in real time as you fill in the form. No surprises at the end.</p></div>
-      <div class="feat-card"><div class="feat-icon fi-g">🧠</div><h3 data-en="Memory Snapshot" data-fr="Instantané Mémoire">Memory Snapshot</h3><p data-en="AI forgets everything when you close the chat. LoopCraft's Memory Snapshot carries your context across sessions automatically." data-fr="L'IA oublie tout quand vous fermez le chat. L'Instantané Mémoire de LoopCraft transporte votre contexte d'une session à l'autre automatiquement.">AI forgets everything when you close the chat. LoopCraft's Memory Snapshot carries your context across sessions automatically.</p></div>
-      <div class="feat-card"><div class="feat-icon fi-y">🌐</div><h3>French & English</h3><p>Full FR/EN toggle. Every label, hint, and generated prompt switches language instantly — built for international teams.</p></div>
-      <div class="feat-card"><div class="feat-icon fi-b">🔗</div><h3 data-en="Share links" data-fr="Liens de partage">Share links</h3><p data-en="Generate a URL that pre-fills the entire form. Send it to a colleague or client — they open the link and it's ready." data-fr="Générez une URL qui pré-remplit tout le formulaire. Envoyez-la à un collègue ou client — il ouvre le lien et c'est prêt.">Generate a URL that pre-fills the entire form. Send it to a colleague or client — they open the link and it's ready.</p></div>
-      <div class="feat-card"><div class="feat-icon fi-pk">📋</div><h3 data-en="Prompt history" data-fr="Historique des prompts">Prompt history</h3><p data-en="Your last 5 prompts are always one click away. Reload, compare, or reuse any past prompt instantly." data-fr="Vos 5 derniers prompts sont toujours à un clic. Rechargez, comparez ou réutilisez n'importe quel prompt passé instantanément.">Your last 5 prompts are always one click away. Reload, compare, or reuse any past prompt instantly.</p></div>
-      <div class="feat-card"><div class="feat-icon fi-o">🤖</div><h3 data-en="Open in Claude" data-fr="Ouvrir dans Claude">Open in Claude</h3><p data-en="One button sends your prompt directly to a new Claude chat — pre-filled and ready to run. Zero copy-pasting." data-fr="Un bouton envoie votre prompt directement dans un nouveau chat Claude — pré-rempli et prêt à fonctionner. Zéro copier-coller.">One button sends your prompt directly to a new Claude chat — pre-filled and ready to run. Zero copy-pasting.</p></div>
-    </div>
-  </div>
+<div class="container">
+<div class="section-label" data-en="Features" data-fr="Fonctionnalités">Features</div>
+<h2 class="section-title" data-en="Everything you need.<br>Nothing you don't." data-fr="Tout ce dont vous avez besoin.<br>Rien de superflu.">Everything you need.<br>Nothing you don't.</h2>
+<p class="section-sub" data-en="Built for real-world AI work — not just another prompt template." data-fr="Conçu pour le travail IA réel — pas juste un autre modèle de prompt.">Built for real-world AI work — not just another prompt template.</p>
+<div class="features-grid">
+<div class="feat-card"><div class="feat-icon fi-p">⚡</div><h3 data-en="Live prompt preview" data-fr="Aperçu en direct">Live prompt preview</h3><p data-en="See your prompt being built in real time as you fill in the form. No surprises at the end." data-fr="Voyez votre prompt se construire en temps réel pendant que vous remplissez le formulaire. Aucune surprise à la fin.">See your prompt being built in real time as you fill in the form. No surprises at the end.</p></div>
+<div class="feat-card"><div class="feat-icon fi-g">🧠</div><h3 data-en="Memory Snapshot" data-fr="Instantané Mémoire">Memory Snapshot</h3><p data-en="AI forgets everything when you close the chat. LoopCraft's Memory Snapshot carries your context across sessions automatically." data-fr="L'IA oublie tout quand vous fermez le chat. L'Instantané Mémoire de LoopCraft transporte votre contexte d'une session à l'autre automatiquement.">AI forgets everything when you close the chat. LoopCraft's Memory Snapshot carries your context across sessions automatically.</p></div>
+<div class="feat-card"><div class="feat-icon fi-y">🌐</div><h3>French & English</h3><p>Full FR/EN toggle. Every label, hint, and generated prompt switches language instantly — built for international teams.</p></div>
+<div class="feat-card"><div class="feat-icon fi-b">🔗</div><h3 data-en="Share links" data-fr="Liens de partage">Share links</h3><p data-en="Generate a URL that pre-fills the entire form. Send it to a colleague or client — they open the link and it's ready." data-fr="Générez une URL qui pré-remplit tout le formulaire. Envoyez-la à un collègue ou client — il ouvre le lien et c'est prêt.">Generate a URL that pre-fills the entire form. Send it to a colleague or client — they open the link and it's ready.</p></div>
+<div class="feat-card"><div class="feat-icon fi-pk">📋</div><h3 data-en="Prompt history" data-fr="Historique des prompts">Prompt history</h3><p data-en="Your last 5 prompts are always one click away. Reload, compare, or reuse any past prompt instantly." data-fr="Vos 5 derniers prompts sont toujours à un clic. Rechargez, comparez ou réutilisez n'importe quel prompt passé instantanément.">Your last 5 prompts are always one click away. Reload, compare, or reuse any past prompt instantly.</p></div>
+<div class="feat-card"><div class="feat-icon fi-o">🤖</div><h3 data-en="Open in Claude" data-fr="Ouvrir dans Claude">Open in Claude</h3><p data-en="One button sends your prompt directly to a new Claude chat — pre-filled and ready to run. Zero copy-pasting." data-fr="Un bouton envoie votre prompt directement dans un nouveau chat Claude — pré-rempli et prêt à fonctionner. Zéro copier-coller.">One button sends your prompt directly to a new Claude chat — pre-filled and ready to run. Zero copy-pasting.</p></div>
+</div>
+</div>
 </section>
 
 <!-- PRICING -->
 <section id="pricing">
-  <div class="container">
-    <div class="section-label" data-en="Pricing" data-fr="Tarifs">Pricing</div>
-    <h2 class="section-title" data-en="Start free. Upgrade when you're ready." data-fr="Commencez gratuitement. Passez à Pro quand vous êtes prêt.">Start free. Upgrade when you're ready.</h2>
-    <p class="section-sub" data-en="No credit card required to get started. Cancel anytime." data-fr="Aucune carte de crédit requise pour commencer. Annulez à tout moment.">No credit card required to get started. Cancel anytime.</p>
-    <div class="pricing-grid" style="grid-template-columns:repeat(2,1fr);max-width:720px;margin:0 auto">
-      <div class="price-card">
-        <div class="price-name" data-en="Free" data-fr="Gratuit">Free</div>
-        <div class="price-amount">$0</div>
-        <div class="price-per" data-en="forever — no credit card needed" data-fr="pour toujours — sans carte de crédit">forever — no credit card needed</div>
-        <div class="price-divider"></div>
-        <ul class="pf">
-          <li>Core Loop prompts</li>
-          <li>3 saved prompts</li>
-          <li>English only</li>
-          <li>Live preview</li>
-          <li>Quick-fill examples</li>
-          <li class="off">Fleet Loop</li>
-          <li class="off">FR/EN toggle</li>
-          <li class="off">Share links</li>
-          <li class="off">Prompt history</li>
-        </ul>
-        <button class="price-cta pc-o" onclick="openModal()" data-en="Get started free" data-fr="Commencer gratuitement">Get started free</button>
-      </div>
-      <div class="price-card featured">
-        <div class="price-badge">MOST POPULAR</div>
-        <div class="price-name">Pro</div>
-        <div class="price-amount">$9<span>/mo</span></div>
-        <div class="price-per" data-en="billed monthly · cancel anytime" data-fr="facturé mensuellement · annulez à tout moment">billed monthly · cancel anytime</div>
-        <div class="price-divider"></div>
-        <ul class="pf">
-          <li>Everything in Free</li>
-          <li>Fleet Loop (Orchestrator + Specialists)</li>
-          <li>Unlimited saved prompts</li>
-          <li>French & English toggle</li>
-          <li>Share links</li>
-          <li>Full prompt history</li>
-          <li>Open in Claude shortcut</li>
-          <li>PDF export</li>
-          <li>Priority support</li>
-        </ul>
-        <button class="price-cta pc-p" onclick="openModal()" data-en="Start Pro free for 14 days" data-fr="Essayer Pro gratuitement 14 jours">Start Pro free for 14 days</button>
-      </div>
-    </div>
-    <p style="text-align:center;font-size:13px;color:var(--muted);margin-top:24px"><span data-en="🏢 Need team or enterprise access? " data-fr="🏢 Besoin d'un accès équipe ou entreprise? ">🏢 Need team or enterprise access? </span><a href="mailto:hello@loopcraft.io" style="color:var(--accent)" data-en="Email us" data-fr="Contactez-nous">Email us</a></p>
-  </div>
+<div class="container">
+<div class="section-label" data-en="Pricing" data-fr="Tarifs">Pricing</div>
+<h2 class="section-title" data-en="Start free. Upgrade when you're ready." data-fr="Commencez gratuitement. Passez à Pro quand vous êtes prêt.">Start free. Upgrade when you're ready.</h2>
+<p class="section-sub" data-en="No credit card required to get started. Cancel anytime." data-fr="Aucune carte de crédit requise pour commencer. Annulez à tout moment.">No credit card required to get started. Cancel anytime.</p>
+<div class="pricing-grid" style="grid-template-columns:repeat(2,1fr);max-width:720px;margin:0 auto">
+<div class="price-card">
+<div class="price-name" data-en="Free" data-fr="Gratuit">Free</div>
+<div class="price-amount">$0</div>
+<div class="price-per" data-en="forever — no credit card needed" data-fr="pour toujours — sans carte de crédit">forever — no credit card needed</div>
+<div class="price-divider"></div>
+<ul class="pf">
+<li>Core Loop prompts</li>
+<li>3 saved prompts</li>
+<li>English only</li>
+<li>Live preview</li>
+<li>Quick-fill examples</li>
+<li class="off">Fleet Loop</li>
+<li class="off">FR/EN toggle</li>
+<li class="off">Share links</li>
+<li class="off">Prompt history</li>
+</ul>
+<button class="price-cta pc-o" onclick="location.href='tool.html'" data-en="Get started free" data-fr="Commencer gratuitement">Get started free</button>
+</div>
+<div class="price-card featured">
+<div class="price-badge">MOST POPULAR</div>
+<div class="price-name">Pro</div>
+<div class="price-amount">$9<span>/mo</span></div>
+<div class="price-per" data-en="billed monthly · cancel anytime" data-fr="facturé mensuellement · annulez à tout moment">billed monthly · cancel anytime</div>
+<div class="price-divider"></div>
+<ul class="pf">
+<li>Everything in Free</li>
+<li>Fleet Loop (Orchestrator + Specialists)</li>
+<li>Unlimited saved prompts</li>
+<li>French & English toggle</li>
+<li>Share links</li>
+<li>Full prompt history</li>
+<li>Open in Claude shortcut</li>
+<li>PDF export</li>
+<li>Priority support</li>
+</ul>
+<button class="price-cta pc-p" onclick="openModal()" data-en="Start Pro free for 14 days" data-fr="Essayer Pro gratuitement 14 jours">Start Pro free for 14 days</button>
+</div>
+</div>
+<p style="text-align:center;font-size:13px;color:var(--muted);margin-top:24px"><span data-en="🏢 Need team or enterprise access? " data-fr="🏢 Besoin d'un accès équipe ou entreprise? ">🏢 Need team or enterprise access? </span><a href="mailto:hello@loopcraft.io" style="color:var(--accent)" data-en="Email us" data-fr="Contactez-nous">Email us</a></p>
+</div>
 </section>
 
 <!-- TESTIMONIALS -->
 <section class="testi-bg">
-  <div class="container">
-    <div class="section-label" data-en="What people say" data-fr="Ce que disent les utilisateurs">What people say</div>
-    <h2 class="section-title" data-en="Real results from real users" data-fr="De vrais résultats pour de vrais utilisateurs">Real results from real users</h2>
-    <p class="section-sub" data-en="From solo consultants to enterprise teams." data-fr="Des consultants indépendants aux équipes d'entreprise.">From solo consultants to enterprise teams.</p>
-    <div class="testi-grid">
-      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"I used to spend 20 minutes crafting the perfect prompt before every AI session. LoopCraft cuts that to 2 minutes and the output is way more structured."</p><div class="testi-author"><div class="testi-av" style="background:var(--accent)">M</div><div><div class="testi-name">Marcus T.</div><div class="testi-role">Freelance Developer · Columbus, OH</div></div></div></div>
-      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"The Memory Snapshot feature alone is worth it. My AI sessions finally feel continuous instead of starting from scratch every single time."</p><div class="testi-author"><div class="testi-av" style="background:var(--accent2)">S</div><div><div class="testi-name">Sophie R.</div><div class="testi-role">Business Analyst · Montreal</div></div></div></div>
-      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"We rolled this out to our whole team. The FR/EN toggle was a dealbreaker for us — half our team works in French. Absolute game changer."</p><div class="testi-author"><div class="testi-av" style="background:var(--warn)">J</div><div><div class="testi-name">Jean-Paul M.</div><div class="testi-role">CTO · Toronto</div></div></div></div>
-    </div>
-  </div>
+<div class="container">
+<div class="section-label" data-en="What people say" data-fr="Ce que disent les utilisateurs">What people say</div>
+<h2 class="section-title" data-en="Real results from real users" data-fr="De vrais résultats pour de vrais utilisateurs">Real results from real users</h2>
+<p class="section-sub" data-en="From solo consultants to enterprise teams." data-fr="Des consultants indépendants aux équipes d'entreprise.">From solo consultants to enterprise teams.</p>
+<div class="testi-grid">
+<div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"I used to spend 20 minutes crafting the perfect prompt before every AI session. LoopCraft cuts that to 2 minutes and the output is way more structured."</p><div class="testi-author"><div class="testi-av" style="background:var(--accent)">M</div><div><div class="testi-name">Marcus T.</div><div class="testi-role">Freelance Developer · Columbus, OH</div></div></div></div>
+<div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"The Memory Snapshot feature alone is worth it. My AI sessions finally feel continuous instead of starting from scratch every single time."</p><div class="testi-author"><div class="testi-av" style="background:var(--accent2)">S</div><div><div class="testi-name">Sophie R.</div><div class="testi-role">Business Analyst · Montreal</div></div></div></div>
+<div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"We rolled this out to our whole team. The FR/EN toggle was a dealbreaker for us — half our team works in French. Absolute game changer."</p><div class="testi-author"><div class="testi-av" style="background:var(--warn)">J</div><div><div class="testi-name">Jean-Paul M.</div><div class="testi-role">CTO · Toronto</div></div></div></div>
+</div>
+</div>
 </section>
 
 <!-- FAQ -->
 <section id="faq">
-  <div class="container">
-    <div class="section-label" data-en="FAQ" data-fr="Questions fréquentes">FAQ</div>
-    <h2 class="section-title" data-en="Common questions" data-fr="Questions courantes">Common questions</h2>
-    <div class="faq-list">
-      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="Do I need to know anything about AI to use this?" data-fr="Dois-je connaître l'IA pour utiliser ceci?">Do I need to know anything about AI to use this?</span><span class="faq-icon">+</span></div><div class="faq-a">No. LoopCraft is designed for anyone — from non-technical business owners to senior engineers. Every term is explained in plain language, and the tool guides you through each decision with examples and hints.</div></div>
-      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="Which AI tools does this work with?" data-fr="Avec quels outils IA cela fonctionne-t-il?">Which AI tools does this work with?</span><span class="faq-icon">+</span></div><div class="faq-a">LoopCraft generates plain-text prompts that work with any AI — Claude, ChatGPT, Gemini, Mistral, or any other. The "Open in Claude" shortcut is a convenience feature, but the prompt itself is universal.</div></div>
-      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="What's the difference between Core Loop and Fleet Loop?" data-fr="Quelle est la différence entre Boucle Principale et Boucle Flotte?">What's the difference between Core Loop and Fleet Loop?</span><span class="faq-icon">+</span></div><div class="faq-a">Core Loop is for focused, single-deliverable tasks handled by one AI agent. Fleet Loop is for complex projects where an Orchestrator delegates work to multiple Specialist agents running in parallel. LoopCraft's built-in quiz helps you choose in seconds.</div></div>
-      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="Can I try Pro before paying?" data-fr="Puis-je essayer Pro avant de payer?">Can I try Pro before paying?</span><span class="faq-icon">+</span></div><div class="faq-a">Yes — Pro comes with a 14-day free trial. No credit card required to start. You'll only be charged if you decide to continue after the trial.</div></div>
-      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="Is there a white-label option for agencies?" data-fr="Existe-t-il une option marque blanche pour les agences?">Is there a white-label option for agencies?</span><span class="faq-icon">+</span></div><div class="faq-a">Yes — white-label is included in the Team plan. You can brand the tool with your agency logo and colors and share it directly with clients.</div></div>
-      <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="Who built this?" data-fr="Qui a créé ceci?">Who built this?</span><span class="faq-icon">+</span></div><div class="faq-a">LoopCraft is built by Prince Tech LLC, a technology consulting firm based in Columbus, Ohio. We build AI workflows, internal tools, and data integrations for businesses. This tool came directly from our own day-to-day client work.</div></div>
-    </div>
-  </div>
+<div class="container">
+<div class="section-label" data-en="FAQ" data-fr="Questions fréquentes">FAQ</div>
+<h2 class="section-title" data-en="Common questions" data-fr="Questions courantes">Common questions</h2>
+<div class="faq-list">
+<div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="Do I need to know anything about AI to use this?" data-fr="Dois-je connaître l'IA pour utiliser ceci?">Do I need to know anything about AI to use this?</span><span class="faq-icon">+</span></div><div class="faq-a">No. LoopCraft is designed for anyone — from non-technical business owners to senior engineers. Every term is explained in plain language, and the tool guides you through each decision with examples and hints.</div></div>
+<div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="Which AI tools does this work with?" data-fr="Avec quels outils IA cela fonctionne-t-il?">Which AI tools does this work with?</span><span class="faq-icon">+</span></div><div class="faq-a">LoopCraft generates plain-text prompts that work with any AI — Claude, ChatGPT, Gemini, Mistral, or any other. The "Open in Claude" shortcut is a convenience feature, but the prompt itself is universal.</div></div>
+<div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="What's the difference between Core Loop and Fleet Loop?" data-fr="Quelle est la différence entre Boucle Principale et Boucle Flotte?">What's the difference between Core Loop and Fleet Loop?</span><span class="faq-icon">+</span></div><div class="faq-a">Core Loop is for focused, single-deliverable tasks handled by one AI agent. Fleet Loop is for complex projects where an Orchestrator delegates work to multiple Specialist agents running in parallel. LoopCraft's built-in quiz helps you choose in seconds.</div></div>
+<div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="Can I try Pro before paying?" data-fr="Puis-je essayer Pro avant de payer?">Can I try Pro before paying?</span><span class="faq-icon">+</span></div><div class="faq-a">Yes — Pro comes with a 14-day free trial. No credit card required to start. You'll only be charged if you decide to continue after the trial.</div></div>
+<div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="Is there a white-label option for agencies?" data-fr="Existe-t-il une option marque blanche pour les agences?">Is there a white-label option for agencies?</span><span class="faq-icon">+</span></div><div class="faq-a">Yes — white-label is included in the Team plan. You can brand the tool with your agency logo and colors and share it directly with clients.</div></div>
+<div class="faq-item" onclick="toggleFaq(this)"><div class="faq-q"><span data-en="Who built this?" data-fr="Qui a créé ceci?">Who built this?</span><span class="faq-icon">+</span></div><div class="faq-a">LoopCraft is built by Prince Tech LLC, a technology consulting firm based in Columbus, Ohio. We build AI workflows, internal tools, and data integrations for businesses. This tool came directly from our own day-to-day client work.</div></div>
+</div>
+</div>
 </section>
 
 <!-- CTA BANNER -->
 <div class="cta-banner">
-  <h2 data-en="Ready to build better AI prompts?" data-fr="Prêt(e) à créer de meilleurs prompts IA?">Ready to build better AI prompts?</h2>
-  <p data-en="Join 2,400+ professionals who spend less time prompting and more time shipping." data-fr="Rejoignez 2 400+ professionnels qui passent moins de temps à rédiger des prompts et plus de temps à livrer.">Join 2,400+ professionals who spend less time prompting and more time shipping.</p>
-  <button class="btn btn-white btn-xl" onclick="openModal()" data-en="Get started free — takes 2 minutes" data-fr="Commencer gratuitement — prend 2 minutes">Get started free — takes 2 minutes</button>
+<h2 data-en="Ready to build better AI prompts?" data-fr="Prêt(e) à créer de meilleurs prompts IA?">Ready to build better AI prompts?</h2>
+<p data-en="Join 2,400+ professionals who spend less time prompting and more time shipping." data-fr="Rejoignez 2 400+ professionnels qui passent moins de temps à rédiger des prompts et plus de temps à livrer.">Join 2,400+ professionals who spend less time prompting and more time shipping.</p>
+<button class="btn btn-white btn-xl" onclick="location.href='tool.html'" data-en="Get started free — takes 2 minutes" data-fr="Commencer gratuitement — prend 2 minutes">Get started free — takes 2 minutes</button>
 </div>
 
 <!-- FOOTER -->
 <footer>
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="footer-brand-logo"><div class="logo-icon">🔄</div><span>LoopCraft</span></div>
-        <p data-en="Build structured AI prompts that actually work. Built for consultants, developers, and teams who need real results from AI." data-fr="Créez des prompts IA structurés qui fonctionnent vraiment. Conçu pour les consultants, développeurs et équipes qui ont besoin de vrais résultats avec l'IA.">Build structured AI prompts that actually work. Built for consultants, developers, and teams who need real results from AI.</p>
-      </div>
-      <div class="footer-col"><h4 data-en="Product" data-fr="Produit">Product</h4><a href="#how" data-en="How it works" data-fr="Comment ça marche">How it works</a><a href="#features" data-en="Features" data-fr="Fonctionnalités">Features</a><a href="#pricing" data-en="Pricing" data-fr="Tarifs">Pricing</a><a href="#">Changelog</a></div>
-      <div class="footer-col"><h4 data-en="Company" data-fr="Société">Company</h4><a href="#">About</a><a href="#">Blog</a><a href="mailto:hello@loopcraft.io">Contact</a></div>
-      <div class="footer-col"><h4 data-en="Legal" data-fr="Légal">Legal</h4><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a></div>
-    </div>
-    <div class="footer-bottom">
-      <span data-en="© 2026 LoopCraft. All rights reserved." data-fr="© 2026 LoopCraft. Tous droits réservés.">© 2026 LoopCraft. All rights reserved.</span>
-      <span>Built by <a href="https://princetechllc.com" target="_blank">Prince Tech LLC</a> · Columbus, Ohio</span>
-    </div>
-  </div>
+<div class="container">
+<div class="footer-grid">
+<div class="footer-brand">
+<div class="footer-brand-logo"><div class="logo-icon">🔄</div><span>LoopCraft</span></div>
+<p data-en="Build structured AI prompts that actually work. Built for consultants, developers, and teams who need real results from AI." data-fr="Créez des prompts IA structurés qui fonctionnent vraiment. Conçu pour les consultants, développeurs et équipes qui ont besoin de vrais résultats avec l'IA.">Build structured AI prompts that actually work. Built for consultants, developers, and teams who need real results from AI.</p>
+</div>
+<div class="footer-col"><h4 data-en="Product" data-fr="Produit">Product</h4><a href="#how" data-en="How it works" data-fr="Comment ça marche">How it works</a><a href="#features" data-en="Features" data-fr="Fonctionnalités">Features</a><a href="#pricing" data-en="Pricing" data-fr="Tarifs">Pricing</a><a href="#">Changelog</a></div>
+<div class="footer-col"><h4 data-en="Company" data-fr="Société">Company</h4><a href="#">About</a><a href="#">Blog</a><a href="mailto:hello@loopcraft.io">Contact</a></div>
+<div class="footer-col"><h4 data-en="Legal" data-fr="Légal">Legal</h4><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a></div>
+</div>
+<div class="footer-bottom">
+<span data-en="© 2026 LoopCraft. All rights reserved." data-fr="© 2026 LoopCraft. Tous droits réservés.">© 2026 LoopCraft. All rights reserved.</span>
+<span>Built by <a href="https://princetechllc.com" target="_blank">Prince Tech LLC</a> · Columbus, Ohio</span>
+</div>
+</div>
 </footer>
 
 <!-- MODAL -->
 <div class="modal-overlay" id="modal" onclick="closeOutside(event)">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()">×</button>
-    <div id="mform">
-      <h2 data-en="🚀 Get early access" data-fr="🚀 Accès anticipé">🚀 Get early access</h2>
-      <p data-en="LoopCraft is in early access. Drop your email and we'll send you in — plus a free 30-day Pro trial." data-fr="LoopCraft est en accès anticipé. Laissez votre email et nous vous enverrons un accès — plus un essai Pro gratuit de 30 jours.">LoopCraft is in early access. Drop your email and we'll send you in — plus a free 30-day Pro trial.</p>
-      <input class="modal-input" type="email" id="memail" placeholder="your@email.com">
-      <input class="modal-input" type="text" id="mname" placeholder="Your name (optional)">
-      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;font-size:15px" onclick="submitModal()" data-en="Join the waitlist →" data-fr="Rejoindre la liste d'attente →">Join the waitlist →</button>
-      <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:12px" data-en="No spam. Unsubscribe anytime." data-fr="Pas de spam. Désabonnez-vous à tout moment.">No spam. Unsubscribe anytime.</p>
-    </div>
-    <div class="modal-success" id="msuccess">
-      <div class="big">🎉</div>
-      <h3 data-en="You're on the list!" data-fr="Vous êtes sur la liste!">You're on the list!</h3>
-      <p data-en="We'll email you within 24 hours with your early access link and free 30-day Pro trial." data-fr="Nous vous enverrons un email dans les 24 heures avec votre lien d'accès et votre essai Pro gratuit de 30 jours.">We'll email you within 24 hours with your early access link and free 30-day Pro trial.</p>
-    </div>
-  </div>
+<div class="modal">
+<button class="modal-close" onclick="closeModal()">×</button>
+<div id="mform">
+<h2 data-en="🚀 Get early access" data-fr="🚀 Accès anticipé">🚀 Get early access</h2>
+<p data-en="LoopCraft is in early access. Drop your email and we'll send you in — plus a free 30-day Pro trial." data-fr="LoopCraft est en accès anticipé. Laissez votre email et nous vous enverrons un accès — plus un essai Pro gratuit de 30 jours.">LoopCraft is in early access. Drop your email and we'll send you in — plus a free 30-day Pro trial.</p>
+<input class="modal-input" type="email" id="memail" placeholder="your@email.com">
+<input class="modal-input" type="text" id="mname" placeholder="Your name (optional)">
+<button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;font-size:15px" onclick="submitModal()" data-en="Join the waitlist →" data-fr="Rejoindre la liste d'attente →">Join the waitlist →</button>
+<p style="font-size:12px;color:var(--muted);text-align:center;margin-top:12px" data-en="No spam. Unsubscribe anytime." data-fr="Pas de spam. Désabonnez-vous à tout moment.">No spam. Unsubscribe anytime.</p>
+</div>
+<div class="modal-success" id="msuccess">
+<div class="big">🎉</div>
+<h3 data-en="You're on the list!" data-fr="Vous êtes sur la liste!">You're on the list!</h3>
+<p data-en="We'll email you within 24 hours with your early access link and free 30-day Pro trial." data-fr="Nous vous enverrons un email dans les 24 heures avec votre lien d'accès et votre essai Pro gratuit de 30 jours.">We'll email you within 24 hours with your early access link and free 30-day Pro trial.</p>
+</div>
+</div>
 </div>
 
 <script>
 // ── THEME ───────────────────────────────────
 let theme='dark';
 function toggleTheme(){
-  theme=theme==='dark'?'light':'dark';
-  document.documentElement.setAttribute('data-theme',theme);
-  document.getElementById('themeBtn').textContent=theme==='dark'?'☀️ Light':'🌙 Dark';
+theme=theme==='dark'?'light':'dark';
+document.documentElement.setAttribute('data-theme',theme);
+document.getElementById('themeBtn').textContent=theme==='dark'?'☀️ Light':'🌙 Dark';
 }
 
 // ── LANGUAGE ────────────────────────────────
 let lang='en';
 function setLang(l){
-  lang=l;
-  document.getElementById('btn-en').classList.toggle('active',l==='en');
-  document.getElementById('btn-fr').classList.toggle('active',l==='fr');
-  document.querySelectorAll('[data-en]').forEach(el=>{
-    const v=el.getAttribute('data-'+l);
-    if(v && el.tagName!=='INPUT' && el.tagName!=='BUTTON' || el.tagName==='BUTTON'){
-      // For buttons, update textContent
-      if(el.tagName==='BUTTON'||el.tagName==='A'){el.textContent=v;}
-      else{el.innerHTML=v;}
-    }
-  });
-  // Update placeholders
-  const emailPh=document.getElementById('memail');
-  const namePh=document.getElementById('mname');
-  if(emailPh) emailPh.placeholder='your@email.com';
-  if(namePh) namePh.placeholder=l==='fr'?'Votre nom (optionnel)':'Your name (optional)';
-  // Update theme button
-  document.getElementById('themeBtn').textContent=theme==='dark'?(l==='fr'?'☀️ Clair':'☀️ Light'):(l==='fr'?'🌙 Sombre':'🌙 Dark');
+lang=l;
+document.getElementById('btn-en').classList.toggle('active',l==='en');
+document.getElementById('btn-fr').classList.toggle('active',l==='fr');
+document.querySelectorAll('[data-en]').forEach(el=>{
+const v=el.getAttribute('data-'+l);
+if(v && el.tagName!=='INPUT' && el.tagName!=='BUTTON' || el.tagName==='BUTTON'){
+// For buttons, update textContent
+if(el.tagName==='BUTTON'||el.tagName==='A'){el.textContent=v;}
+else{el.innerHTML=v;}
+}
+});
+// Update placeholders
+const emailPh=document.getElementById('memail');
+const namePh=document.getElementById('mname');
+if(emailPh) emailPh.placeholder='your@email.com';
+if(namePh) namePh.placeholder=l==='fr'?'Votre nom (optionnel)':'Your name (optional)';
+// Update theme button
+document.getElementById('themeBtn').textContent=theme==='dark'?(l==='fr'?'☀️ Clair':'☀️ Light'):(l==='fr'?'🌙 Sombre':'🌙 Dark');
 }
 
 // ── MODAL ───────────────────────────────────
@@ -468,10 +468,10 @@ function openModal(){document.getElementById('modal').classList.add('open');docu
 function closeModal(){document.getElementById('modal').classList.remove('open');document.body.style.overflow=''}
 function closeOutside(e){if(e.target===document.getElementById('modal'))closeModal()}
 function submitModal(){
-  const email=document.getElementById('memail').value;
-  if(!email.includes('@')){document.getElementById('memail').style.borderColor='#ef4444';return}
-  document.getElementById('mform').style.display='none';
-  document.getElementById('msuccess').style.display='block';
+const email=document.getElementById('memail').value;
+if(!email.includes('@')){document.getElementById('memail').style.borderColor='#ef4444';return}
+document.getElementById('mform').style.display='none';
+document.getElementById('msuccess').style.display='block';
 }
 
 // ── FAQ ─────────────────────────────────────
@@ -479,8 +479,8 @@ function toggleFaq(el){el.classList.toggle('open')}
 
 // ── NAV SHADOW ──────────────────────────────
 window.addEventListener('scroll',()=>{
-  const nav=document.getElementById('navbar');
-  if(nav) nav.style.boxShadow=window.scrollY>20?'0 4px 24px rgba(0,0,0,.25)':'none';
+const nav=document.getElementById('navbar');
+if(nav) nav.style.boxShadow=window.scrollY>20?'0 4px 24px rgba(0,0,0,.25)':'none';
 });
 </script>
 </body>
