@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoopCraft — Describe it. Get your prompt.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface-2: #21242f;
+    --border: #2a2d3e;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --accent: #6c63ff;
+    --accent-soft: rgba(108, 99, 255, 0.14);
+    --success: #22c55e;
+    --warn: #f59e0b;
+    --radius: 10px;
+    --sans: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+  .brand-mark {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), #9b8cff);
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 15px; color: #fff;
+  }
+  .brand-name { font-weight: 600; font-size: 17px; letter-spacing: -0.01em; }
+  .brand-name span { color: var(--accent); }
+  .header-right { display: flex; align-items: center; gap: 14px; }
+  .lang-toggle {
+    display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+  }
+  .lang-toggle button {
+    background: transparent; border: none; color: var(--muted);
+    font-family: var(--sans); font-size: 13px; font-weight: 600;
+    padding: 6px 12px; cursor: pointer; transition: background 0.15s, color 0.15s;
+  }
+  .lang-toggle button.active { background: var(--accent-soft); color: var(--accent); }
+  .lang-toggle button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .home-link { color: var(--muted); font-size: 13.5px; text-decoration: none; }
+  .home-link:hover { color: var(--text); }
+
+  /* ── MAIN COLUMN ── */
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+  }
+
+  .hero-title {
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    text-align: center;
+  }
+  .hero-title em { font-style: normal; color: var(--accent); }
+  .hero-sub {
+    text-align: center;
+    color: var(--muted);
+    font-size: 16px;
+    margin: 14px auto 40px;
+    max-width: 520px;
+  }
+
+  /* ── THE ONE BOX ── */
+  .composer {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 8px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .composer:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .composer textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    resize: vertical;
+    min-height: 130px;
+    padding: 14px 14px 6px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .composer textarea:focus { outline: none; }
+  .composer textarea::placeholder { color: var(--muted); opacity: 0.85; }
+  .composer-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 6px 8px 6px 14px;
+  }
+  .composer-hint { color: var(--muted); font-size: 12.5px; }
+  .btn {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    border-radius: 9px;
+    padding: 11px 22px;
+    cursor: pointer;
+    transition: transform 0.12s, filter 0.15s, background 0.15s;
+  }
+  .btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { filter: brightness(1.12); }
+  .btn-primary:disabled { opacity: 0.55; cursor: wait; }
+  .btn-ghost {
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--border); font-size: 13.5px; padding: 8px 14px;
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+
+  /* ── EXAMPLE CHIPS ── */
+  .starters { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 18px; }
+  .starter {
+    background: transparent; border: 1px solid var(--border); color: var(--muted);
+    border-radius: 999px; padding: 7px 14px; font-family: var(--sans);
+    font-size: 13px; cursor: pointer; transition: color 0.15s, border-color 0.15s;
+  }
+  .starter:hover { color: var(--text); border-color: var(--accent); }
+  .starter:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ── RESULT ── */
+  #result { display: none; margin-top: 44px; }
+  #result.visible { display: block; animation: rise 0.35s ease; }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  .receipt-label {
+    font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+  }
+  .receipt { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 999px; padding: 6px 13px;
+    font-size: 13px; color: var(--text); font-family: var(--sans);
+    cursor: pointer; transition: border-color 0.15s;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .chip b { color: var(--accent); font-weight: 600; }
+  .chip .pencil { color: var(--muted); font-size: 11px; }
+  .receipt-why { color: var(--muted); font-size: 13.5px; margin-bottom: 22px; }
+
+  .prompt-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .prompt-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+    flex-wrap: wrap; gap: 8px;
+  }
+  .prompt-head-title { font-size: 13px; font-weight: 600; color: var(--muted); }
+  .prompt-actions { display: flex; gap: 8px; }
+  pre#promptOut {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.65;
+    padding: 20px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 480px;
+    overflow-y: auto;
+    color: #cdd6e4;
+  }
+
+  /* ── ADVANCED PANEL ── */
+  details.advanced { margin-top: 26px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+  details.advanced summary {
+    cursor: pointer; padding: 14px 18px; font-weight: 600; font-size: 14.5px;
+    color: var(--muted); list-style: none; display: flex; align-items: center; gap: 8px;
+  }
+  details.advanced summary::-webkit-details-marker { display: none; }
+  details.advanced summary::before { content: '▸'; transition: transform 0.2s; color: var(--accent); }
+  details.advanced[open] summary::before { transform: rotate(90deg); }
+  details.advanced summary:hover { color: var(--text); }
+  .adv-grid { padding: 6px 18px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .adv-field { display: flex; flex-direction: column; gap: 6px; }
+  .adv-field.full { grid-column: 1 / -1; }
+  .adv-field label { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+  .adv-field input, .adv-field select, .adv-field textarea {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    color: var(--text); font-family: var(--sans); font-size: 14px; padding: 9px 12px;
+  }
+  .adv-field textarea { resize: vertical; min-height: 60px; }
+  .adv-field input:focus, .adv-field select:focus, .adv-field textarea:focus {
+    outline: none; border-color: var(--accent);
+  }
+  .adv-divider {
+    grid-column: 1 / -1; font-size: 11.5px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+    padding-top: 8px; border-top: 1px solid var(--border);
+  }
+
+  /* ── HISTORY ── */
+  details.history { margin-top: 18px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+  details.history summary {
+    cursor: pointer; padding: 13px 18px; font-weight: 600; font-size: 14px;
+    color: var(--muted); list-style: none;
+  }
+  details.history summary::-webkit-details-marker { display: none; }
+  details.history summary:hover { color: var(--text); }
+  .history-list { padding: 0 18px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .history-item {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 14px; font-size: 13.5px; color: var(--muted); cursor: pointer;
+    text-align: left; font-family: var(--sans);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .history-item:hover { color: var(--text); border-color: var(--accent); }
+  .history-empty { color: var(--muted); font-size: 13px; padding: 0 18px 16px; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--surface-2); border: 1px solid var(--border); color: var(--text);
+    padding: 11px 20px; border-radius: 10px; font-size: 14px; font-weight: 500;
+    opacity: 0; transition: transform 0.25s ease, opacity 0.25s ease; pointer-events: none; z-index: 50;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* ── ENGINE STATUS ── */
+  .engine-note {
+    text-align: center; margin-top: 10px; font-size: 12px; color: var(--muted);
+  }
+  .engine-note .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
+  .dot.ai { background: var(--success); }
+  .dot.local { background: var(--warn); }
+
+  @media (max-width: 620px) {
+    .adv-grid { grid-template-columns: 1fr; }
+    main { padding-top: 36px; }
+    .composer-bar { flex-direction: column; align-items: stretch; }
+    .composer-hint { text-align: center; }
+    .btn-primary { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="index.html">
+    <div class="brand-mark">L</div>
+    <div class="brand-name">Loop<span>Craft</span></div>
+  </a>
+  <div class="header-right">
+    <a class="home-link" href="index.html" data-en="← Home" data-fr="← Accueil">← Home</a>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+      <button id="btn-fr" onclick="setLang('fr')">FR</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <h1 class="hero-title" data-en="Describe it. <em>Get your prompt.</em>" data-fr="Décrivez-le. <em>Recevez votre prompt.</em>">Describe it. <em>Get your prompt.</em></h1>
+  <p class="hero-sub" data-en="Tell LoopCraft what you're working on — like you'd text a colleague. It figures out the setup and builds a structured AI prompt for you." data-fr="Dites à LoopCraft sur quoi vous travaillez — comme un message à un collègue. Il détermine la configuration et construit un prompt IA structuré pour vous.">Tell LoopCraft what you're working on — like you'd text a colleague. It figures out the setup and builds a structured AI prompt for you.</p>
+
+  <div class="composer">
+    <textarea id="brief" data-placeholder-en="e.g. I need a Python script that pulls stock data from an API and scores each stock. Yesterday I finished the API connection — next is the scoring logic." data-placeholder-fr="ex. J'ai besoin d'un script Python qui récupère des données boursières via une API et note chaque action. Hier j'ai terminé la connexion API — la suite c'est la logique de scoring." placeholder="e.g. I need a Python script that pulls stock data from an API and scores each stock. Yesterday I finished the API connection — next is the scoring logic."></textarea>
+    <div class="composer-bar">
+      <span class="composer-hint" data-en="One or two sentences is enough. Mention past work and it builds your memory snapshot too." data-fr="Une ou deux phrases suffisent. Mentionnez le travail passé et il construit aussi votre snapshot mémoire.">One or two sentences is enough. Mention past work and it builds your memory snapshot too.</span>
+      <button class="btn btn-primary" id="goBtn" onclick="generate()" data-en="Build my prompt" data-fr="Créer mon prompt">Build my prompt</button>
+    </div>
+  </div>
+
+  <div class="starters">
+    <button class="starter" onclick="useStarter(0)" data-en="Build a dashboard" data-fr="Créer un tableau de bord">Build a dashboard</button>
+    <button class="starter" onclick="useStarter(1)" data-en="Continue yesterday's project" data-fr="Continuer le projet d'hier">Continue yesterday's project</button>
+    <button class="starter" onclick="useStarter(2)" data-en="Automate a report" data-fr="Automatiser un rapport">Automate a report</button>
+    <button class="starter" onclick="useStarter(3)" data-en="Plan a full platform" data-fr="Planifier une plateforme complète">Plan a full platform</button>
+  </div>
+
+  <p class="engine-note" id="engineNote"></p>
+
+  <!-- ── RESULT ── -->
+  <section id="result" aria-live="polite">
+    <p class="receipt-label" data-en="What LoopCraft decided — tap any chip to change it" data-fr="Ce que LoopCraft a décidé — touchez une puce pour la modifier">What LoopCraft decided — tap any chip to change it</p>
+    <div class="receipt">
+      <button class="chip" onclick="openAdvanced('loopType')"><span data-en="Loop" data-fr="Boucle">Loop</span>:&nbsp;<b id="chipLoop">Core</b> <span class="pencil">✎</span></button>
+      <button class="chip" onclick="openAdvanced('role')"><span data-en="Role" data-fr="Rôle">Role</span>:&nbsp;<b id="chipRole">Developer</b> <span class="pencil">✎</span></button>
+      <button class="chip" onclick="openAdvanced('format')"><span data-en="Output" data-fr="Sortie">Output</span>:&nbsp;<b id="chipFormat">Code</b> <span class="pencil">✎</span></button>
+      <button class="chip" id="chipMemoryWrap" style="display:none" onclick="openAdvanced('memStatus')"><span data-en="Memory" data-fr="Mémoire">Memory</span>:&nbsp;<b data-en="detected" data-fr="détectée">detected</b> <span class="pencil">✎</span></button>
+    </div>
+    <p class="receipt-why" id="whyLine"></p>
+
+    <div class="prompt-box">
+      <div class="prompt-head">
+        <span class="prompt-head-title" data-en="Your prompt — paste it at the start of any AI chat" data-fr="Votre prompt — collez-le au début de n'importe quel chat IA">Your prompt — paste it at the start of any AI chat</span>
+        <div class="prompt-actions">
+          <button class="btn btn-ghost" onclick="copyPrompt()" data-en="Copy" data-fr="Copier">Copy</button>
+          <button class="btn btn-ghost" onclick="openInClaude()" data-en="Open in Claude" data-fr="Ouvrir dans Claude">Open in Claude</button>
+        </div>
+      </div>
+      <pre id="promptOut"></pre>
+    </div>
+
+    <!-- ── ADVANCED ── -->
+    <details class="advanced" id="advPanel">
+      <summary data-en="Advanced — edit the details" data-fr="Avancé — modifier les détails">Advanced — edit the details</summary>
+      <div class="adv-grid">
+        <div class="adv-field">
+          <label for="projectName" data-en="Project name" data-fr="Nom du projet">Project name</label>
+          <input id="projectName" oninput="rebuild()">
+        </div>
+        <div class="adv-field">
+          <label for="loopType" data-en="Loop pattern" data-fr="Modèle de boucle">Loop pattern</label>
+          <select id="loopType" onchange="rebuild()">
+            <option value="core">Core Loop — one goal, one deliverable</option>
+            <option value="fleet">Fleet Loop — multiple workstreams</option>
+          </select>
+        </div>
+        <div class="adv-field">
+          <label for="role" data-en="AI acts as" data-fr="L'IA agit comme">AI acts as</label>
+          <select id="role" onchange="rebuild()">
+            <option value="Developer">Developer — writes &amp; fixes code</option>
+            <option value="Data Analyst">Data Analyst — data &amp; SQL</option>
+            <option value="AI Engineer">AI Engineer — automations</option>
+            <option value="Business Analyst">Business Analyst — plans &amp; documents</option>
+            <option value="Cloud / DevOps Engineer">Cloud / DevOps — deploys &amp; configures</option>
+            <option value="UX Designer">UX Designer — interfaces</option>
+          </select>
+        </div>
+        <div class="adv-field">
+          <label for="format" data-en="Output format" data-fr="Format de sortie">Output format</label>
+          <select id="format" onchange="rebuild()">
+            <option value="Working code">Code — ready to run</option>
+            <option value="Step-by-step action plan">Action plan — steps to follow</option>
+            <option value="Written report">Report — shareable document</option>
+            <option value="SQL queries">SQL — database queries</option>
+            <option value="Data analysis">Analysis — data insights</option>
+            <option value="Email / proposal draft">Email / Proposal — ready to send</option>
+          </select>
+        </div>
+        <div class="adv-field full">
+          <label for="goal" data-en="Goal — what should the AI build or do?" data-fr="Objectif — que doit faire ou construire l'IA ?">Goal — what should the AI build or do?</label>
+          <textarea id="goal" oninput="rebuild()"></textarea>
+        </div>
+        <div class="adv-field full">
+          <label for="doneWhen" data-en="Done when — how will you know it's finished?" data-fr="Terminé quand — comment saurez-vous que c'est fini ?">Done when — how will you know it's finished?</label>
+          <textarea id="doneWhen" oninput="rebuild()"></textarea>
+        </div>
+        <div class="adv-field full">
+          <label for="outOfScope" data-en="Out of scope — what should the AI NOT do?" data-fr="Hors périmètre — que ne doit PAS faire l'IA ?">Out of scope — what should the AI NOT do?</label>
+          <textarea id="outOfScope" oninput="rebuild()"></textarea>
+        </div>
+        <div class="adv-divider" data-en="Memory snapshot — for continuing past work" data-fr="Snapshot mémoire — pour continuer un travail passé">Memory snapshot — for continuing past work</div>
+        <div class="adv-field full">
+          <label for="memStatus" data-en="📍 Where are we right now?" data-fr="📍 Où en sommes-nous ?">📍 Where are we right now?</label>
+          <textarea id="memStatus" oninput="rebuild()"></textarea>
+        </div>
+        <div class="adv-field">
+          <label for="memLast" data-en="✅ Finished last time" data-fr="✅ Terminé la dernière fois">✅ Finished last time</label>
+          <textarea id="memLast" oninput="rebuild()"></textarea>
+        </div>
+        <div class="adv-field">
+          <label for="memDecisions" data-en="🔒 Locked decisions" data-fr="🔒 Décisions verrouillées">🔒 Locked decisions</label>
+          <textarea id="memDecisions" oninput="rebuild()"></textarea>
+        </div>
+        <div class="adv-field full">
+          <label for="memNext" data-en="➡️ Next task" data-fr="➡️ Prochaine tâche">➡️ Next task</label>
+          <textarea id="memNext" oninput="rebuild()"></textarea>
+        </div>
+      </div>
+    </details>
+
+    <!-- ── HISTORY ── -->
+    <details class="history">
+      <summary data-en="Recent prompts" data-fr="Prompts récents">Recent prompts</summary>
+      <div class="history-list" id="historyList"></div>
+      <p class="history-empty" id="historyEmpty" data-en="Nothing saved yet — prompts save automatically when you generate." data-fr="Rien d'enregistré — les prompts s'enregistrent automatiquement à la génération.">Nothing saved yet — prompts save automatically when you generate.</p>
+    </details>
+  </section>
+</main>
+
+<div id="toast" role="status"></div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   LoopCraft v2 — one box, one button
+   Tries /api/generate (live AI) → falls back to
+   the built-in local inference engine.
+   ═══════════════════════════════════════════════ */
+
+var LANG = 'en';
+var STR = {
+  en: {
+    whyCore: "Core Loop — this reads as one clear deliverable, so a single focused agent is faster and cheaper.",
+    whyFleet: "Fleet Loop — this mentions multiple workstreams, so the prompt sets up an orchestrator with specialists.",
+    whyRole: "Role and output were inferred from your wording.",
+    memYes: "Past work detected — a memory snapshot was added so the AI won't redo finished work.",
+    copied: "Copied to clipboard",
+    copyFail: "Couldn't copy — select the text manually",
+    aiOn: "Live AI engine connected",
+    aiOff: "Smart-template mode — instant and free. Live AI activates when the API is connected.",
+    building: "Building…",
+    build: "Build my prompt",
+    emptyBrief: "Describe what you're working on first — one sentence is enough.",
+    untitled: "Untitled project"
+  },
+  fr: {
+    whyCore: "Core Loop — cela ressemble à un livrable unique et clair, donc un seul agent concentré est plus rapide et moins coûteux.",
+    whyFleet: "Fleet Loop — cela mentionne plusieurs chantiers, donc le prompt configure un orchestrateur avec des spécialistes.",
+    whyRole: "Le rôle et la sortie ont été déduits de votre formulation.",
+    memYes: "Travail passé détecté — un snapshot mémoire a été ajouté pour que l'IA ne refasse pas le travail terminé.",
+    copied: "Copié dans le presse-papiers",
+    copyFail: "Copie impossible — sélectionnez le texte manuellement",
+    aiOn: "Moteur IA en direct connecté",
+    aiOff: "Mode template intelligent — instantané et gratuit. Le mode IA s'activera quand l'API sera connectée.",
+    building: "Création…",
+    build: "Créer mon prompt",
+    emptyBrief: "Décrivez d'abord votre projet — une phrase suffit.",
+    untitled: "Projet sans titre"
+  }
+};
+
+var STARTERS = {
+  en: [
+    "I need an internal dashboard that shows our monthly sales by region, pulling from a CSV export.",
+    "Continue my project from yesterday — I finished the login page, decisions locked: React + FastAPI. Next is the user profile page.",
+    "Automate a weekly Excel report: take the raw export, clean it, and summarize totals by department.",
+    "Plan a full client platform: member portal, payment page, admin dashboard, and email notifications."
+  ],
+  fr: [
+    "J'ai besoin d'un tableau de bord interne montrant les ventes mensuelles par région, à partir d'un export CSV.",
+    "Continuer mon projet d'hier — j'ai terminé la page de connexion, décisions verrouillées : React + FastAPI. La suite : la page de profil utilisateur.",
+    "Automatiser un rapport Excel hebdomadaire : prendre l'export brut, le nettoyer et résumer les totaux par département.",
+    "Planifier une plateforme client complète : portail membre, page de paiement, tableau de bord admin et notifications email."
+  ]
+};
+
+/* ── Language ── */
+function setLang(l) {
+  LANG = l;
+  document.getElementById('btn-en').classList.toggle('active', l === 'en');
+  document.getElementById('btn-fr').classList.toggle('active', l === 'fr');
+  document.documentElement.lang = l;
+  document.querySelectorAll('[data-en]').forEach(function(el) {
+    var v = el.getAttribute('data-' + l);
+    if (v !== null) el.innerHTML = v;
+  });
+  var ta = document.getElementById('brief');
+  ta.placeholder = ta.getAttribute('data-placeholder-' + l) || ta.placeholder;
+  updateEngineNote();
+  try { localStorage.setItem('lc_lang', l); } catch (e) {}
+}
+
+function useStarter(i) {
+  document.getElementById('brief').value = STARTERS[LANG][i];
+  document.getElementById('brief').focus();
+}
+
+/* ── Local inference engine (fallback + instant mode) ── */
+function inferLocal(text) {
+  var t = text.toLowerCase();
+  var r = {};
+
+  // Loop type: fleet if multiple workstreams are implied
+  var fleetHits = 0;
+  ['platform', 'plateforme', 'full ', 'complète', 'complete ', ' portal', 'portail',
+   'frontend and backend', 'ui + api', 'multiple', 'plusieurs', 'several',
+   'and payment', 'et paiement', 'notifications', 'admin'].forEach(function(k) {
+    if (t.indexOf(k) !== -1) fleetHits++;
+  });
+  var commaChunks = text.split(/,| and | et /).length;
+  r.loop = (fleetHits >= 2 || commaChunks >= 4) ? 'fleet' : 'core';
+
+  // Role
+  var scores = {
+    'Developer': 0, 'Data Analyst': 0, 'AI Engineer': 0,
+    'Business Analyst': 0, 'Cloud / DevOps Engineer': 0, 'UX Designer': 0
+  };
+  var roleKeys = {
+    'Developer': ['code', 'script', 'app', 'api', 'bug', 'fix', 'build a', 'python', 'javascript', 'react', 'page', 'fonction', 'application', 'site'],
+    'Data Analyst': ['sql', 'data', 'données', 'report', 'rapport', 'excel', 'csv', 'analyz', 'analys', 'dashboard', 'tableau de bord', 'metrics', 'kpi'],
+    'AI Engineer': ['automat', 'workflow', ' ai ', "l'ia", 'prompt', 'agent', 'llm', 'claude', 'gpt'],
+    'Business Analyst': ['plan', 'requirement', 'exigence', 'document', 'proposal', 'proposition', 'process', 'processus', 'stakeholder'],
+    'Cloud / DevOps Engineer': ['deploy', 'déploi', 'aws', 'terraform', 'vercel', 'docker', 'server', 'serveur', 'infra', 'ci/cd', 'pipeline'],
+    'UX Designer': ['design', 'mockup', 'maquette', ' ui ', 'ux', 'interface', 'wireframe', 'figma']
+  };
+  Object.keys(roleKeys).forEach(function(role) {
+    roleKeys[role].forEach(function(k) { if (t.indexOf(k) !== -1) scores[role]++; });
+  });
+  // Intent boost: an explicit planning verb beats incidental tech mentions (e.g. "deployed on Vercel")
+  if (/\b(plan|planning|planifier)\b[^.!?]{0,50}/.test(t.slice(0, 80)) || /need to plan|besoin de planifier|help me plan/.test(t)) {
+    scores['Business Analyst'] += 3;
+  }
+  var best = 'Developer', bestScore = 0;
+  Object.keys(scores).forEach(function(role) {
+    if (scores[role] > bestScore) { best = role; bestScore = scores[role]; }
+  });
+  r.role = best;
+
+  // Format
+  r.format = 'Working code';
+  if (best === 'Data Analyst') r.format = 'Data analysis';
+  if (best === 'Business Analyst') r.format = 'Step-by-step action plan';
+  if (t.indexOf('sql') !== -1) r.format = 'SQL queries';
+  if (t.indexOf('report') !== -1 || t.indexOf('rapport') !== -1) r.format = 'Written report';
+  if (/(write|draft|send|compose|rédiger|envoyer)[^.!?]{0,40}(email|e-mail|courriel)/.test(t) || /\b(proposal|proposition)\b/.test(t)) r.format = 'Email / proposal draft';
+  if (t.indexOf('plan ') === 0 || t.indexOf('planifier') !== -1) r.format = 'Step-by-step action plan';
+
+  // Memory detection
+  var memHits = ['yesterday', 'hier', 'last session', 'dernière session', 'last time', 'la dernière fois',
+    'already', 'déjà', 'finished', 'terminé', "j'ai fini", 'continue', 'continuer', 'locked', 'verrouill', 'decisions'];
+  r.hasMemory = memHits.some(function(k) { return t.indexOf(k) !== -1; });
+
+  if (r.hasMemory) {
+    var parts = text.split(/[.!]\s+|—|;/);
+    var done = [], next = [], locked = [];
+    parts.forEach(function(p) {
+      var pl = p.toLowerCase();
+      if (/next|suite|now i|maintenant|todo|à faire/.test(pl)) next.push(p.trim());
+      else if (/finish|terminé|fini|done|complet|already|déjà|deploy|déploi|shipped|launched|lancé/.test(pl)) done.push(p.trim());
+      if (/locked|verrouill|decided|décidé|décisions|using /.test(pl)) locked.push(p.trim());
+    });
+    r.memLast = done.join('. ');
+    r.memNext = next.join('. ');
+    r.memDecisions = locked.join('. ');
+    r.memStatus = parts[0] ? parts[0].trim() : '';
+  }
+
+  // Goal = first sentence; project name = first few meaningful words (cut at colon, strip intent verbs)
+  var firstSentence = text.split(/[.!?\n]/)[0].trim();
+  r.goal = firstSentence;
+  r.projectName = firstSentence.split(/[:—;]/)[0]
+    .replace(/^(i need |i want |je veux |j'ai besoin d'|j'ai besoin de |help me |aide-moi à )/i, '')
+    .replace(/^(to )?(plan|build|create|fix|automate|continue|planifier|construire|créer|corriger|automatiser|continuer)\s+/i, '')
+    .split(/\s+/).slice(0, 5).join(' ')
+    .replace(/\s+(of|for|the|a|my|de|pour|le|la|mon|ma)$/i, '');
+  r.projectName = r.projectName.charAt(0).toUpperCase() + r.projectName.slice(1);
+  r.doneWhen = '';
+  r.outOfScope = '';
+  return r;
+}
+
+/* ── Try live AI first, fall back to local ── */
+var AI_AVAILABLE = null; // unknown until first try
+
+async function inferSmart(text) {
+  try {
+    var res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ brief: text, lang: LANG })
+    });
+    if (!res.ok) throw new Error('api unavailable');
+    var data = await res.json();
+    AI_AVAILABLE = true;
+    updateEngineNote();
+    return data; // expects same shape as inferLocal output
+  } catch (e) {
+    AI_AVAILABLE = false;
+    updateEngineNote();
+    return inferLocal(text);
+  }
+}
+
+function updateEngineNote() {
+  var n = document.getElementById('engineNote');
+  if (AI_AVAILABLE === true) {
+    n.innerHTML = '<span class="dot ai"></span>' + STR[LANG].aiOn;
+  } else if (AI_AVAILABLE === false) {
+    n.innerHTML = '<span class="dot local"></span>' + STR[LANG].aiOff;
+  } else {
+    n.innerHTML = '';
+  }
+}
+
+/* ── Build the final prompt text ── */
+function buildPrompt(d) {
+  var lines = [];
+  var loopLabel = d.loop === 'fleet' ? 'FLEET LOOP (orchestrator + specialists)' : 'CORE LOOP (single focused agent)';
+
+  lines.push('# PROJECT: ' + (d.projectName || STR[LANG].untitled));
+  lines.push('');
+  lines.push('## ROLE');
+  lines.push('Act as an experienced ' + d.role + '. Think step by step, state assumptions, and ask before making irreversible choices.');
+  lines.push('');
+  lines.push('## LOOP PATTERN — ' + loopLabel);
+  if (d.loop === 'fleet') {
+    lines.push('Operate as an orchestrator. Break this project into workstreams, assign each to a specialist perspective, and reconcile their outputs into one coherent deliverable. Surface conflicts between workstreams before resolving them.');
+  } else {
+    lines.push('Work as a single focused agent toward one deliverable. Plan first, then execute step by step. Do not expand scope.');
+  }
+  lines.push('');
+  lines.push('## GOAL');
+  lines.push(d.goal || '(describe the goal)');
+  if (d.doneWhen) {
+    lines.push('');
+    lines.push('## DONE WHEN');
+    lines.push(d.doneWhen);
+  }
+  if (d.outOfScope) {
+    lines.push('');
+    lines.push('## OUT OF SCOPE — do NOT do these');
+    lines.push(d.outOfScope);
+  }
+  lines.push('');
+  lines.push('## OUTPUT FORMAT');
+  lines.push(d.format + '. Keep the answer structured and directly usable.');
+
+  var hasMem = d.memStatus || d.memLast || d.memDecisions || d.memNext;
+  if (hasMem) {
+    lines.push('');
+    lines.push('## MEMORY SNAPSHOT — context from previous sessions');
+    if (d.memStatus)    lines.push('- Current state: ' + d.memStatus);
+    if (d.memLast)      lines.push('- Already finished (do not redo): ' + d.memLast);
+    if (d.memDecisions) lines.push('- Locked decisions (do not re-question): ' + d.memDecisions);
+    if (d.memNext)      lines.push('- Next task: ' + d.memNext);
+  }
+  lines.push('');
+  lines.push('## FIRST MOVE');
+  lines.push('Start by confirming your understanding of the goal in 2-3 bullets, then begin.');
+  return lines.join('\n');
+}
+
+/* ── Main generate flow ── */
+async function generate() {
+  var brief = document.getElementById('brief').value.trim();
+  if (!brief) { toast(STR[LANG].emptyBrief); return; }
+
+  var btn = document.getElementById('goBtn');
+  btn.disabled = true;
+  btn.textContent = STR[LANG].building;
+
+  var d = await inferSmart(brief);
+
+  // Fill advanced fields
+  document.getElementById('projectName').value = d.projectName || '';
+  document.getElementById('loopType').value = d.loop || 'core';
+  document.getElementById('role').value = d.role || 'Developer';
+  document.getElementById('format').value = d.format || 'Working code';
+  document.getElementById('goal').value = d.goal || '';
+  document.getElementById('doneWhen').value = d.doneWhen || '';
+  document.getElementById('outOfScope').value = d.outOfScope || '';
+  document.getElementById('memStatus').value = d.memStatus || '';
+  document.getElementById('memLast').value = d.memLast || '';
+  document.getElementById('memDecisions').value = d.memDecisions || '';
+  document.getElementById('memNext').value = d.memNext || '';
+
+  rebuild();
+
+  // Receipt why-line
+  var why = (d.loop === 'fleet' ? STR[LANG].whyFleet : STR[LANG].whyCore) + ' ' + STR[LANG].whyRole;
+  var memShown = d.hasMemory || d.memStatus || d.memLast;
+  if (memShown) why += ' ' + STR[LANG].memYes;
+  document.getElementById('whyLine').textContent = why;
+  document.getElementById('chipMemoryWrap').style.display = memShown ? '' : 'none';
+
+  document.getElementById('result').classList.add('visible');
+  saveToHistory(brief);
+
+  btn.disabled = false;
+  btn.textContent = STR[LANG].build;
+  document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ── Rebuild prompt from advanced fields (edits regenerate live) ── */
+function rebuild() {
+  var d = {
+    projectName: document.getElementById('projectName').value,
+    loop: document.getElementById('loopType').value,
+    role: document.getElementById('role').value,
+    format: document.getElementById('format').value,
+    goal: document.getElementById('goal').value,
+    doneWhen: document.getElementById('doneWhen').value,
+    outOfScope: document.getElementById('outOfScope').value,
+    memStatus: document.getElementById('memStatus').value,
+    memLast: document.getElementById('memLast').value,
+    memDecisions: document.getElementById('memDecisions').value,
+    memNext: document.getElementById('memNext').value
+  };
+  document.getElementById('promptOut').textContent = buildPrompt(d);
+  // Sync chips
+  document.getElementById('chipLoop').textContent = d.loop === 'fleet' ? 'Fleet' : 'Core';
+  document.getElementById('chipRole').textContent = d.role;
+  var fmtShort = d.format.split(/[—-]/)[0].trim();
+  document.getElementById('chipFormat').textContent = fmtShort.length > 18 ? fmtShort.slice(0, 18) + '…' : fmtShort;
+}
+
+/* ── Chips open the advanced panel at the right field ── */
+function openAdvanced(fieldId) {
+  var panel = document.getElementById('advPanel');
+  panel.open = true;
+  var f = document.getElementById(fieldId);
+  if (f) { f.focus(); f.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+}
+
+/* ── Copy / Open ── */
+function copyPrompt() {
+  var text = document.getElementById('promptOut').textContent;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() { toast(STR[LANG].copied); }, function() { toast(STR[LANG].copyFail); });
+  } else {
+    toast(STR[LANG].copyFail);
+  }
+}
+function openInClaude() {
+  var text = document.getElementById('promptOut').textContent;
+  window.open('https://claude.ai/new?q=' + encodeURIComponent(text), '_blank');
+}
+
+/* ── History (last 5 briefs, localStorage, fails silently) ── */
+function saveToHistory(brief) {
+  try {
+    var h = JSON.parse(localStorage.getItem('lc_history') || '[]');
+    h = h.filter(function(x) { return x !== brief; });
+    h.unshift(brief);
+    h = h.slice(0, 5);
+    localStorage.setItem('lc_history', JSON.stringify(h));
+    renderHistory();
+  } catch (e) {}
+}
+function renderHistory() {
+  try {
+    var h = JSON.parse(localStorage.getItem('lc_history') || '[]');
+    var list = document.getElementById('historyList');
+    var empty = document.getElementById('historyEmpty');
+    list.innerHTML = '';
+    empty.style.display = h.length ? 'none' : '';
+    h.forEach(function(brief) {
+      var b = document.createElement('button');
+      b.className = 'history-item';
+      b.textContent = brief;
+      b.onclick = function() {
+        document.getElementById('brief').value = brief;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('brief').focus();
+      };
+      list.appendChild(b);
+    });
+  } catch (e) {}
+}
+
+/* ── Toast ── */
+var toastTimer;
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2400);
+}
+
+/* ── Init ── */
+(function() {
+  try {
+    var saved = localStorage.getItem('lc_lang');
+    if (saved === 'fr') setLang('fr');
+  } catch (e) {}
+  renderHistory();
+  // Ctrl/Cmd+Enter generates
+  document.getElementById('brief').addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') generate();
+  });
+})();
+</script>
+</body>
+</html>
