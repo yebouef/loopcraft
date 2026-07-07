@@ -213,6 +213,11 @@
   details.advanced summary::before { content: '▸'; transition: transform 0.2s; color: var(--accent); }
   details.advanced[open] summary::before { transform: rotate(90deg); }
   details.advanced summary:hover { color: var(--text); }
+  /* ── LIVE-EDIT MODE: keep prompt visible while editing ── */
+  #result.editing .prompt-box { position: sticky; top: 10px; z-index: 20; box-shadow: 0 12px 34px rgba(0,0,0,.4); }
+  #result.editing pre#promptOut { max-height: 180px; overflow: auto; }
+  .upd-badge { display: inline-block; margin-left: 8px; font-size: 11px; font-weight: 700; color: var(--success); opacity: 0; transition: opacity .25s; }
+  .upd-badge.pulse { opacity: 1; }
   .adv-grid { padding: 6px 18px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .adv-field { display: flex; flex-direction: column; gap: 6px; }
   .adv-field.full { grid-column: 1 / -1; }
@@ -325,7 +330,7 @@
 
     <div class="prompt-box">
       <div class="prompt-head">
-        <span class="prompt-head-title" data-en="Your prompt — paste it at the start of any AI chat" data-fr="Votre prompt — collez-le au début de n'importe quel chat IA">Your prompt — paste it at the start of any AI chat</span>
+        <span class="prompt-head-title" data-en="Your prompt — paste it at the start of any AI chat" data-fr="Votre prompt — collez-le au début de n'importe quel chat IA">Your prompt — paste it at the start of any AI chat</span><span class="upd-badge" id="updBadge" data-en="✓ updated" data-fr="✓ mis à jour">✓ updated</span>
         <div class="prompt-actions">
           <button class="btn btn-ghost" onclick="copyPrompt()" data-en="Copy" data-fr="Copier">Copy</button>
           <button class="btn btn-ghost" onclick="openInClaude()" data-en="Open in Claude" data-fr="Ouvrir dans Claude">Open in Claude</button>
@@ -336,7 +341,7 @@
 
     <!-- ── ADVANCED ── -->
     <details class="advanced" id="advPanel">
-      <summary data-en="Advanced — edit the details" data-fr="Avancé — modifier les détails">Advanced — edit the details</summary>
+      <summary data-en="Advanced — edit the details (your prompt above updates live)" data-fr="Avancé — modifier les détails (votre prompt ci-dessus se met à jour en direct)">Advanced — edit the details (your prompt above updates live)</summary>
       <div class="adv-grid">
         <div class="adv-field">
           <label for="projectName" data-en="Project name" data-fr="Nom du projet">Project name</label>
@@ -716,6 +721,17 @@ function rebuild() {
   document.getElementById('chipRole').textContent = d.role;
   var fmtShort = d.format.split(/[—-]/)[0].trim();
   document.getElementById('chipFormat').textContent = fmtShort.length > 18 ? fmtShort.slice(0, 18) + '…' : fmtShort;
+  flashUpdated();
+}
+
+/* ── "✓ updated" pulse on every live edit ── */
+var updTimer;
+function flashUpdated() {
+  var b = document.getElementById('updBadge');
+  if (!b) return;
+  b.classList.add('pulse');
+  clearTimeout(updTimer);
+  updTimer = setTimeout(function() { b.classList.remove('pulse'); }, 1400);
 }
 
 /* ── Chips open the advanced panel at the right field ── */
@@ -789,6 +805,10 @@ function toast(msg) {
     if (saved === 'fr') setLang('fr');
   } catch (e) {}
   renderHistory();
+  // Sticky compact preview while the advanced panel is open
+  document.getElementById('advPanel').addEventListener('toggle', function() {
+    document.getElementById('result').classList.toggle('editing', this.open);
+  });
   // Ctrl/Cmd+Enter generates
   document.getElementById('brief').addEventListener('keydown', function(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') generate();
